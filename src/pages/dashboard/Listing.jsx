@@ -139,18 +139,21 @@ const Listing = () => {
                     <h2 className="text-lg font-bold">{goal.title}</h2>
                   </div>
 
-                  <h3 className="text-lg font-extrabold mt-2">
-                    ₦{goal.paid.toLocaleString()}
-                  </h3>
-                  <p className="text-sm text-gray-200">
-                    out of ₦{goal.total.toLocaleString()} ({goal.progress}%)
-                  </p>
-
-                  <div className="mt-2">
-                    <p className="text-gray-300 text-sm">Weekly deposit</p>
-                    <h4 className="font-bold">
-                      ₦{goal.weeklyDeposit.toLocaleString()}
-                    </h4>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="text-lg font-extrabold mt-2">
+                        ₦{goal.paid.toLocaleString()}
+                      </h3>
+                      <p className="text-sm text-gray-200">
+                        out of ₦{goal.total.toLocaleString()} ({goal.progress}%)
+                      </p>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-gray-300 text-sm text-right">Weekly deposit</p>
+                      <h4 className="font-bold text-right">
+                        ₦{goal.weeklyDeposit.toLocaleString()}
+                      </h4>
+                    </div>
                   </div>
 
                   <div className="flex justify-between mt-2">
@@ -161,8 +164,8 @@ const Listing = () => {
                       </h4>
                     </div>
                     <div>
-                      <p className="text-gray-300 text-sm">Est. Date</p>
-                      <h4 className="font-bold">{goal.estDate}</h4>
+                      <p className="text-gray-300 text-sm text-right">Est. Date</p>
+                      <h4 className="font-bold text-right">{goal.estDate}</h4>
                     </div>
                   </div>
 
@@ -183,54 +186,56 @@ const Listing = () => {
       <div className="my-10">
         <h1 className="font-bold text-xl mb-5">Listed Properties</h1>
         <div className="grid md:grid-cols-3 gap-6">
-         
-          <Link to="/dashboard/listing/details" className="no-underline !text-black">
-           <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200">
-            {/* Left Image */}
-            <div className="relative w-full sm:w-1/3">
-              <img
-                src={house}
-                alt="property"
-                className="w-full h-28 object-cover"
-              />
-              <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
-                50% Discount
-              </span>
-            </div>
-
-            {/* Right Details */}
-            <div className="flex flex-col justify-between p-4 w-full sm:w-2/3">
-              {/* Title */}
-              <h2 className="text-md font-bold leading-tight">
-                4 Semi detached-duplex <br /> with 2 room BQ
-              </h2>
-
-              {/* Location */}
-              <p className="text-gray-400 flex items-center gap-2 mt-2">
-                <FaMapMarkerAlt className="text-xs" />
-                Big land city Apo hilltop
-              </p>
-
-              {/* Price */}
-              <div className="flex justify-between items-center mt-2">
-                <h1 className="font-semibold">₦13,000,000</h1>
-                <h3 className="font-bold">500 SQM</h3>
+          <Link
+            to="/dashboard/listing/details"
+            className="no-underline !text-black"
+          >
+            <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200">
+              {/* Left Image */}
+              <div className="relative w-full sm:w-1/3">
+                <img
+                  src={house}
+                  alt="property"
+                  className="w-full h-28 object-cover"
+                />
+                <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
+                  50% Discount
+                </span>
               </div>
 
-              {/* Bottom Info */}
-              <div className="flex items-center justify-between mt-4">
-                <div>
-                  <h3 className="font-bold text-xs">₦1,500,000</h3>
-                  <p className="text-gray-400 text-xs">Weekly deposit</p>
-                </div>
-                <div>
-                  <h3 className="font-bold text-xs">6 Months</h3>
-                  <p className="text-gray-400 text-xs">Duration</p>
-                </div>
-              </div>
+              {/* Right Details */}
+              <div className="flex flex-col justify-between p-4 w-full sm:w-2/3">
+                {/* Title */}
+                <h2 className="text-md font-bold leading-tight">
+                  4 Semi detached-duplex <br /> with 2 room BQ
+                </h2>
 
-              {/* Footer */}
-              {/* <div className="flex justify-end mt-4">
+                {/* Location */}
+                <p className="text-gray-400 flex items-center gap-2 mt-2">
+                  <FaMapMarkerAlt className="text-xs" />
+                  Big land city Apo hilltop
+                </p>
+
+                {/* Price */}
+                <div className="flex justify-between items-center mt-2">
+                  <h1 className="font-semibold">₦13,000,000</h1>
+                  <h3 className="font-bold">500 SQM</h3>
+                </div>
+
+                {/* Bottom Info */}
+                <div className="flex items-center justify-between mt-4">
+                  <div>
+                    <h3 className="font-bold text-xs">₦1,500,000</h3>
+                    <p className="text-gray-400 text-xs">Weekly deposit</p>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-xs">6 Months</h3>
+                    <p className="text-gray-400 text-xs">Duration</p>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                {/* <div className="flex justify-end mt-4">
                 <div className="flex items-center bg-green-600 text-white px-3 py-1 rounded-lg text-xs gap-2">
                   <img
                     src="https://upload.wikimedia.org/wikipedia/commons/7/79/Coat_of_arms_of_Nigeria.svg"
@@ -241,8 +246,8 @@ const Listing = () => {
                   <FaCheck />
                 </div>
               </div> */}
+              </div>
             </div>
-          </div>
           </Link>
 
           <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200">
