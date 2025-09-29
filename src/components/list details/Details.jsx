@@ -1,18 +1,47 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button, Input } from "antd";
-import blueBall from "../../assets/blue_ball.png"
-import grayBall from "../../assets/gray_ball.png"
-import download from "../../assets/download.png"
+import download from "../../assets/download.png";
+import "leaflet/dist/leaflet.css";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import axios from "axios";
+import { Link } from "react-router";
 
 const Details = () => {
   const [activeTab, setActiveTab] = useState(1);
+  const [location, setLocation] = useState("");
+  const [coords, setCoords] = useState({ lat: 9.082, lng: 8.6753 });
+
+  useEffect(() => {
+    if (!location) return;
+    const delayDebounce = setTimeout(() => {
+      searchLocation();
+    }, 1000); // wait 1s after typing
+
+    return () => clearTimeout(delayDebounce);
+  }, [location]);
+
+  const searchLocation = async () => {
+    try {
+      const res = await axios.get(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          location + ", Nigeria"
+        )}`
+      );
+      if (res.data.length > 0) {
+        const { lat, lon } = res.data[0];
+        setCoords({ lat: parseFloat(lat), lng: parseFloat(lon) });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const tabs = [
-    { key: 1, label: "About", content: "About content goes here." },
+    { key: 1, label: "About", content: "About" },
     { key: 2, label: "Details", content: "Details" },
     { key: 3, label: "Documents", content: "Attached documents go here." },
     { key: 4, label: "Location", content: "Map and location details here." },
@@ -97,21 +126,20 @@ const Details = () => {
         })}
       </div>
 
-        {/* ✅ Animated Tab Content */}
-        <div className="mt-6 min-h-[120px]">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3 }}
-            >
-              {activeContent}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      
+      {/* ✅ Animated Tab Content */}
+      <div className="mt-6 min-h-[120px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeContent}
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
       {/* Description */}
       <div className="mt-6">
@@ -211,18 +239,6 @@ const Details = () => {
         </div>
       </div>
 
-       <h1 className="font-bold text-2xl mt-8">Payment Method</h1>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-5">
-        <div class="p-6 rounded-lg flex justify-between items-center border border-gray-100">
-          <p>Outrightly</p>
-          <img src={blueBall} alt="" className="w-4" />
-        </div>
-        <div class="p-6 rounded-lg flex justify-between items-center border border-gray-100">
-          <p>Buying to Sales</p>
-          <img src={grayBall} alt="" className="w-4" />
-        </div>
-      </div>
-
       <h1 className="font-bold text-2xl mt-8">Opportunity Attache ments</h1>
       <p className="text-gray-400 text-sm">
         TBC - Makeen Eastern Fund and Makeen Eastern Fund
@@ -242,14 +258,14 @@ const Details = () => {
       <h1 className="font-bold text-2xl mt-8">Destination</h1>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-5">
         <Input
-        placeholder="Insert your Known Location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        className="!bg-[#b0b2c3] !border-none !outline-none !py-3 placeholder:!text-black mb-4"
-      />
+          placeholder="Insert your Known Location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="!bg-[#b0b2c3] !border-none !outline-none !py-3 placeholder:!text-black mb-4"
+        />
       </div>
 
-      {/* <div className="mt-9">
+      <div className="mt-9">
         <h2>Location</h2>
         <MapContainer
           center={[coords.lat, coords.lng]}
@@ -262,8 +278,21 @@ const Details = () => {
             <Popup>{location || "Nigeria"}</Popup>
           </Marker>
         </MapContainer>
-      </div> */}
+      </div>
 
+      <div className="flex justify-between items-center mt-11">
+        <Link to="/dashboard/listing/pay-outright">
+          <Button className="!bg-[#0047FF] !text-white !px-10 !rounded-lg !border-none !py-5">
+            Pay Outright
+          </Button>
+        </Link>
+
+        <Link to="/dashboard/listing/initial-deposit">
+          <Button className="!bg-[#12033A] !text-white !px-10 !rounded-lg !border-none !py-5">
+            Pay Installment
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 };

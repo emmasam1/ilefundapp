@@ -95,7 +95,7 @@ const SavePlanForm = () => {
               onClick={() => setSelectedWallet(w.id)}
               className={`${
                 w.color
-              } relative text-white text-center rounded-xl cursor-pointer h-32 p-4 transition-all flex justify-center items-center flex-col ${
+              } relative text-white text-center rounded-xl cursor-pointer h-32 p-4 transition-all flex justify-center items-center flex-col bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center ${
                 selectedWallet === w.id
                   ? "ring-4 ring-white scale-105 brightness-110"
                   : "opacity-80 hover:opacity-100"
@@ -127,7 +127,7 @@ const SavePlanForm = () => {
               onClick={() => setSelectedSource(s.id)}
               className={`${
                 s.color
-              } relative text-white text-center h-32 rounded-xl cursor-pointer p-4 transition-all flex justify-center items-center flex-col ${
+              } relative text-white text-center h-32 rounded-xl cursor-pointer p-4 transition-all flex justify-center items-center flex-col bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center ${
                 selectedSource === s.id
                   ? "ring-4 ring-white scale-105 brightness-110"
                   : "opacity-80 hover:opacity-100"

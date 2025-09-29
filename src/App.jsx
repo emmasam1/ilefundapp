@@ -25,6 +25,12 @@ import TopUp from "./pages/topUp/TopUp";
 import Withdrawal from "./pages/Withdrawal/Withdrawal";
 import Listing from "./pages/dashboard/Listing";
 import Details from "./components/list details/Details";
+import InitialDeposit from "./components/list details/InitialDeposit";
+import Summary from "./components/list details/Summary";
+import PayOutright from "./components/list details/PayOutright";
+import Goals from "./pages/dashboard/Goals";
+import GoalDetails from "./components/goals/GoalDetails";
+import Profile from "./pages/profile/Profile";
 
 function App() {
   return (
@@ -50,11 +56,17 @@ function App() {
       <Route path="/dashboard" element={<DashboardLayout />} >
         <Route path="" element={<Dashboard />} />
         <Route path="wallet" element={<Wallet />} />
+        <Route path="goals" element={<Goals />} />
         <Route path="wallet/home-fund" element={<HomeFund />} />
         <Route path="wallet/rainy-day" element={<RainyDay />} />
         <Route path="wallet/balling" element={<Bailing />} />
         <Route path="listing" element={<Listing />} />
         <Route path="listing/details" element={<Details />} />
+        <Route path="listing/initial-deposit" element={<InitialDeposit />} />
+        <Route path="listing/pay-outright" element={<PayOutright />} />
+        <Route path="listing/listing-summary" element={<Summary />} />
+        <Route path="goals/goal-detail/:id" element={<GoalDetails />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
     </Routes>

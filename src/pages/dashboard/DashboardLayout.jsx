@@ -72,6 +72,7 @@ const DashboardLayout = () => {
   const getSelectedKey = () => {
     if (location.pathname.startsWith("/dashboard/wallet")) return "3";
     if (location.pathname.startsWith("/dashboard/listing")) return "4";
+    if (location.pathname.startsWith("/dashboard/goals")) return "5";
     return menuKeyMap[location.pathname] || "1";
   };
 
@@ -157,37 +158,43 @@ const DashboardLayout = () => {
         }}
       >
         {/* Fixed Header */}
-        <Header className="!bg-white flex justify-between items-center sticky top-0 z-40 shadow-sm px-6">
-          <div>
-            <h1 className="font-bold text-2xl/7">Hello Rachael,</h1>
-            {/* ✅ Now uses state */}
-            <p className="text-gray-400 mt-3">{greeting}</p>
-          </div>
+        {/* Fixed Header */}
+        {location.pathname !== "/dashboard/profile" && (
+          <Header className="!bg-white flex justify-between items-center sticky top-0 z-40 shadow-sm px-6">
+            <div>
+              <h1 className="font-bold text-2xl/7">Hello Rachael,</h1>
+              <p className="text-gray-400 mt-3">{greeting}</p>
+            </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute bg-[#FF5050] text-white rounded-full w-5 h-5 flex justify-center items-center -top-1 right-0">
-                0
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="absolute bg-[#FF5050] text-white rounded-full w-5 h-5 flex justify-center items-center -top-1 right-0">
+                  0
+                </div>
+                <img src={notifications} alt="notifications" className="w-7" />
               </div>
-              <img src={notifications} alt="notifications" className="w-7" />
+              <div className="h-12 w-12 rounded-full">
+                <img
+                  src={user_img}
+                  alt="user avatar"
+                  className="rounded-full object-cover h-12 w-12"
+                />
+              </div>
             </div>
-            <div className="h-12 w-12 rounded-full">
-              <img
-                src={user_img}
-                alt="user avatar"
-                className="rounded-full object-cover h-12 w-12"
-              />
-            </div>
-          </div>
-        </Header>
+          </Header>
+        )}
 
         {/* Main Content */}
         <Content
-          style={{
-            margin: "24px 16px",
-            minHeight: 280,
-            background: "white",
-          }}
+          style={
+            location.pathname === "/dashboard/profile"
+              ? {} // no styles at all for profile page
+              : {
+                  margin: "24px 16px",
+                  minHeight: 280,
+                  background: "white",
+                }
+          }
         >
           <Outlet />
         </Content>

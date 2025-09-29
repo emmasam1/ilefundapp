@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { PiEye } from "react-icons/pi";
 import cross from "../../assets/round_cross.png";
@@ -13,7 +13,7 @@ import { Link } from "react-router";
 const Wallet = () => {
   const amount = "12,854,886.00";
   const hiddenAmount = "****.00";
-  const [isAmountVisible, setIsAmountVisible] = React.useState(false);
+  const [isAmountVisible, setIsAmountVisible] = useState(false);
 
   const toggleAmountVisibility = () => {
     setIsAmountVisible(!isAmountVisible);
@@ -74,7 +74,7 @@ const Wallet = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:min-w-[900px] pb-4">
             {/* Item 1 */}
             <Link to="/dashboard/wallet/home-fund">
-              <div className="bg-[#658FFB] p-6 rounded-lg flex items-center gap-4 py-8 cursor-pointer">
+              <div className="bg-[#658FFB] p-6 rounded-lg flex items-center gap-4 py-8 cursor-pointer bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center">
                 <div>
                   <img src={ri_funds_line} alt="" className="w-11" />
                 </div>
@@ -87,7 +87,7 @@ const Wallet = () => {
 
             {/* Item 2 */}
             <Link to="/dashboard/wallet/balling">
-              <div className="bg-[#FF9500] p-6 rounded-lg flex items-center gap-4 py-8 cursor-pointer">
+              <div className="bg-[#FF9500] p-6 rounded-lg flex items-center gap-4 py-8 cursor-pointer bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center">
                 <div>
                   <img src={hugeicons_savings} alt="" className="w-11" />
                 </div>
@@ -100,7 +100,7 @@ const Wallet = () => {
 
             {/* Item 3 */}
             <Link to="/dashboard/wallet/rainy-day">
-              <div className="bg-[#9157EF] p-6 rounded-lg flex items-center gap-4 py-8 cursor-pointer">
+              <div className="bg-[#9157EF] p-6 rounded-lg flex items-center gap-4 py-8 cursor-pointer bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center">
                 <div>
                   <img src={fluent_savings} alt="" className="w-11" />
                 </div>
