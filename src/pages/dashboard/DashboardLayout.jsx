@@ -73,6 +73,7 @@ const DashboardLayout = () => {
     if (location.pathname.startsWith("/dashboard/wallet")) return "3";
     if (location.pathname.startsWith("/dashboard/listing")) return "4";
     if (location.pathname.startsWith("/dashboard/goals")) return "5";
+    if (location.pathname.startsWith("/dashboard/profile")) return "6";
     return menuKeyMap[location.pathname] || "1";
   };
 
@@ -159,7 +160,7 @@ const DashboardLayout = () => {
       >
         {/* Fixed Header */}
         {/* Fixed Header */}
-        {location.pathname !== "/dashboard/profile" && (
+        {!location.pathname.startsWith("/dashboard/profile") && (
           <Header className="!bg-white flex justify-between items-center sticky top-0 z-40 shadow-sm px-6">
             <div>
               <h1 className="font-bold text-2xl/7">Hello Rachael,</h1>
@@ -187,8 +188,8 @@ const DashboardLayout = () => {
         {/* Main Content */}
         <Content
           style={
-            location.pathname === "/dashboard/profile"
-              ? {} // no styles at all for profile page
+            location.pathname.includes("/dashboard/profile")
+              ? {} // no styles at all for any profile page
               : {
                   margin: "24px 16px",
                   minHeight: 280,

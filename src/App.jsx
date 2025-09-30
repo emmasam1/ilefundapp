@@ -31,6 +31,9 @@ import PayOutright from "./components/list details/PayOutright";
 import Goals from "./pages/dashboard/Goals";
 import GoalDetails from "./components/goals/GoalDetails";
 import Profile from "./pages/profile/Profile";
+import Personal from "./pages/profile/Personal";
+import EditProfile from "./pages/profile/EditProfile";
+import AddCard from "./pages/profile/AddCard";
 
 function App() {
   return (
@@ -53,7 +56,7 @@ function App() {
       <Route path="/top-up-account" element={<TopUp />} />
       <Route path="/Withdraw-funds" element={<Withdrawal />} />
 
-      <Route path="/dashboard" element={<DashboardLayout />} >
+      <Route path="/dashboard" element={<DashboardLayout />}>
         <Route path="" element={<Dashboard />} />
         <Route path="wallet" element={<Wallet />} />
         <Route path="goals" element={<Goals />} />
@@ -67,8 +70,11 @@ function App() {
         <Route path="listing/listing-summary" element={<Summary />} />
         <Route path="goals/goal-detail/:id" element={<GoalDetails />} />
         <Route path="profile" element={<Profile />} />
-      </Route>
 
+        <Route path="profile/personal" element={<Personal />} />
+        <Route path="profile/edit-profile" element={<EditProfile />} />
+        <Route path="profile/banks" element={<AddCard />} />
+      </Route>
     </Routes>
   );
 }
