@@ -2,9 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 
 import back_arrow from "../../assets/back_arrow.png";
-import ri_funds_line from "../../assets/ri_funds-line.png";
 import round_cross from "../../assets/round_cross.png";
-import fluent_savings from "../../assets/fluent_savings.png";
 
 const AddCard = () => {
   return (

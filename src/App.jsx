@@ -34,6 +34,9 @@ import Profile from "./pages/profile/Profile";
 import Personal from "./pages/profile/Personal";
 import EditProfile from "./pages/profile/EditProfile";
 import AddCard from "./pages/profile/AddCard";
+import SecuritySettings from "./pages/profile/SecuritySettings";
+import NotificationSettings from "./pages/profile/NotificationSettings";
+import NextOfKin from "./pages/profile/NextOfKin";
 
 function App() {
   return (
@@ -74,6 +77,9 @@ function App() {
         <Route path="profile/personal" element={<Personal />} />
         <Route path="profile/edit-profile" element={<EditProfile />} />
         <Route path="profile/banks" element={<AddCard />} />
+        <Route path="profile/privacy" element={<SecuritySettings />} />
+        <Route path="profile/notifications-settings" element={<NotificationSettings />} />
+        <Route path="profile/nextofkin" element={<NextOfKin />} />
       </Route>
     </Routes>
   );
