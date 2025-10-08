@@ -37,6 +37,8 @@ import AddCard from "./pages/profile/AddCard";
 import SecuritySettings from "./pages/profile/SecuritySettings";
 import NotificationSettings from "./pages/profile/NotificationSettings";
 import NextOfKin from "./pages/profile/NextOfKin";
+import ChangePassword from "./pages/profile/ChangePassword";
+import TransactionHistory from "./pages/profile/TransactionHistory";
 
 function App() {
   return (
@@ -80,6 +82,8 @@ function App() {
         <Route path="profile/privacy" element={<SecuritySettings />} />
         <Route path="profile/notifications-settings" element={<NotificationSettings />} />
         <Route path="profile/nextofkin" element={<NextOfKin />} />
+        <Route path="profile/change-password" element={<ChangePassword />} />
+        <Route path="profile/transaction-history" element={<TransactionHistory />} />
       </Route>
     </Routes>
   );

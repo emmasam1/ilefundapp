@@ -17,6 +17,7 @@ const SecuritySettings = () => {
     {
       label: "Change Password",
       icon: <img src={password} className="w-10" />,
+      link: "/dashboard/profile/change-password"
     },
     {
       label: "2-Factor Authentication",

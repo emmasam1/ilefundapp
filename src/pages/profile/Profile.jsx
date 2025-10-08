@@ -37,7 +37,7 @@ const menuItems = [
   {
     label: "Transaction history",
     icon: <img src={history} className="w-10" />,
-    path: "/dashboard/profile/history",
+    path: "/dashboard/profile/transaction-history",
   },
   {
     label: "Banks & Cards",
