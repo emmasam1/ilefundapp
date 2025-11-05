@@ -3,31 +3,100 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UserOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, theme, Divider, Grid } from "antd";
-import { Outlet, Link, useLocation } from "react-router"; // still using react-router
+import {
+  Button,
+  Layout,
+  Menu,
+  theme,
+  Divider,
+  Grid,
+  Dropdown,
+  Space,
+  Skeleton,
+  message,
+} from "antd";
+import { Outlet, Link, useLocation, useNavigate } from "react-router";
 import logo from "../../assets/logo.png";
-import user from "../../assets/User.png";
+import userIcon from "../../assets/User.png";
 import wallet from "../../assets/wallet.png";
 import listing from "../../assets/listing.png";
 import goals from "../../assets/goals.png";
 import credit from "../../assets/credit.png";
 import notifications from "../../assets/notifications.png";
 import user_img from "../../assets/user_img.png";
+import axios from "axios";
+import { useApp } from "../../context/AppContext";
 
 const { Header, Sider, Content } = Layout;
 const { useBreakpoint } = Grid;
 
 const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [userName, setUserName] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+
   const {
     token: { borderRadiusLG },
   } = theme.useToken();
 
+  const { API_BASE_URL, token, logout } = useApp();
+  const navigate = useNavigate();
   const location = useLocation();
   const screens = useBreakpoint();
 
-  // ✅ Greeting state
+  // Fetch user profile
+  const getUserProfile = async () => {
+    try {
+      setLoadingUser(true);
+      const res = await axios.get(`${API_BASE_URL}/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const firstName = res?.data?.user?.firstName;
+      const lastName = res?.data?.user?.lastName;
+      setUserName(`${firstName} ${lastName}`);
+    } catch (error) {
+      console.error(error);
+      message.error("Failed to fetch user profile");
+    } finally {
+      setLoadingUser(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) getUserProfile();
+  }, [token]);
+
+  // Logout handler
+  const logUserOut = async () => {
+    try {
+      await axios.post(
+        `${API_BASE_URL}/logout`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      logout(); // from context
+      message.success("Logged out successfully");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      message.error("Logout failed");
+    }
+  };
+
+  const items = [
+    {
+      label: (
+        <span onClick={logUserOut} style={{ cursor: "pointer" }}>
+          Logout
+        </span>
+      ),
+      key: "0",
+    },
+  ];
+
+  // Greeting message
   const [greeting, setGreeting] = useState("");
 
   const computeGreeting = () => {
@@ -38,37 +107,26 @@ const DashboardLayout = () => {
   };
 
   useEffect(() => {
-    // set initial greeting
     setGreeting(computeGreeting());
-
-    // update every minute so it changes if user leaves page open
-    const id = setInterval(() => {
-      setGreeting(computeGreeting());
-    }, 60 * 1000);
-
+    const id = setInterval(() => setGreeting(computeGreeting()), 60000);
     return () => clearInterval(id);
   }, []);
 
-  // collapse sidebar automatically on small screens
+  // collapse sidebar on small screens
   useEffect(() => {
-    if (!screens.lg) {
-      setCollapsed(true);
-    } else {
-      setCollapsed(false);
-    }
+    setCollapsed(!screens.lg);
   }, [screens]);
 
-  // map route paths to menu keys
+  // map routes to menu
   const menuKeyMap = {
     "/dashboard": "1",
-    "/dashboard/invest": "2",
-    "/dashboard/wallet": "3",
-    "/dashboard/listing": "4",
-    "/dashboard/goals": "5",
-    "/dashboard/profile": "6",
+    // "/dashboard/invest": "2",
+    "/dashboard/wallet": "2",
+    "/dashboard/listing": "3",
+    "/dashboard/goals": "4",
+    "/dashboard/profile": "5",
   };
 
-  // ensure wallet stays active on nested routes like /dashboard/wallet/home-fund
   const getSelectedKey = () => {
     if (location.pathname.startsWith("/dashboard/wallet")) return "3";
     if (location.pathname.startsWith("/dashboard/listing")) return "4";
@@ -79,25 +137,21 @@ const DashboardLayout = () => {
 
   return (
     <Layout hasSider>
-      {/* Fixed Sidebar */}
+      {/* Sidebar */}
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
-        className="!bg-[#EAEAEA] !fixed left-0 top-0 !h-screen z-50 "
+        className="!bg-[#EAEAEA] !fixed left-0 top-0 !h-screen z-50"
         width={220}
       >
-        {/* Logo + Toggle */}
+        {/* Logo */}
         <div className="flex items-center justify-center">
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
-            }}
+            style={{ fontSize: 16, width: 64, height: 64 }}
             className="mt-3"
           />
           <img
@@ -106,10 +160,9 @@ const DashboardLayout = () => {
             className={`${collapsed ? "hidden" : "w-30"}`}
           />
         </div>
-
         <Divider />
 
-        {/* Sidebar Menu */}
+        {/* Menu */}
         <Menu
           className="!bg-[#EAEAEA]"
           mode="inline"
@@ -119,11 +172,6 @@ const DashboardLayout = () => {
               key: "1",
               icon: <UserOutlined />,
               label: <Link to="/dashboard">Home</Link>,
-            },
-            {
-              key: "2",
-              icon: <img src={credit} alt="" className="w-7" />,
-              label: <Link to="/dashboard/invest">Invest</Link>,
             },
             {
               key: "3",
@@ -142,15 +190,15 @@ const DashboardLayout = () => {
             },
             {
               key: "6",
-              icon: <img src={user} alt="" className="w-7" />,
+              icon: <img src={userIcon} alt="" className="w-7" />,
               label: <Link to="/dashboard/profile">Profile</Link>,
             },
           ]}
         />
-
         <Divider />
       </Sider>
 
+      {/* Main Layout */}
       <Layout
         style={{
           marginLeft: collapsed ? 80 : 220,
@@ -158,12 +206,17 @@ const DashboardLayout = () => {
           minHeight: "100vh",
         }}
       >
-        {/* Fixed Header */}
-        {/* Fixed Header */}
+        {/* Header */}
         {!location.pathname.startsWith("/dashboard/profile") && (
           <Header className="!bg-white flex justify-between items-center sticky top-0 z-40 shadow-sm px-6">
             <div>
-              <h1 className="font-bold text-2xl/7">Hello Rachael,</h1>
+              {loadingUser ? (
+                <Skeleton.Input active size="small" style={{ width: 150 }} />
+              ) : (
+                <h1 className="font-bold text-2xl/7 capitalize">
+                  {userName || "User"},
+                </h1>
+              )}
               <p className="text-gray-400 mt-3">{greeting}</p>
             </div>
 
@@ -174,13 +227,20 @@ const DashboardLayout = () => {
                 </div>
                 <img src={notifications} alt="notifications" className="w-7" />
               </div>
-              <div className="h-12 w-12 rounded-full">
-                <img
-                  src={user_img}
-                  alt="user avatar"
-                  className="rounded-full object-cover h-12 w-12"
-                />
-              </div>
+              <Dropdown menu={{ items }} trigger={["click"]}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Space>
+                    <div className="h-12 w-12 rounded-full">
+                      <img
+                        src={user_img}
+                        alt="user avatar"
+                        className="rounded-full object-cover h-12 w-12"
+                      />
+                    </div>
+                    <DownOutlined />
+                  </Space>
+                </a>
+              </Dropdown>
             </div>
           </Header>
         )}
@@ -189,7 +249,7 @@ const DashboardLayout = () => {
         <Content
           style={
             location.pathname.includes("/dashboard/profile")
-              ? {} // no styles at all for any profile page
+              ? {}
               : {
                   margin: "24px 16px",
                   minHeight: 280,

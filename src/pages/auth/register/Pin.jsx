@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from "react";
 import logo from "../../../assets/logo.png";
-import { Form, Button, Input } from "antd";
-import { useNavigate, Link } from "react-router";
+import { Form, Button, Input, message } from "antd";
+import { useNavigate, Link, useLocation } from "react-router";
 import { CheckCircleFilled } from "@ant-design/icons";
 import progress_reg from "../../../assets/progress_reg.png";
+import { useApp } from "../../../context/AppContext.jsx";
+import axios from "axios";
 
 const Pin = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(120); // 2 minutes
   const [canResend, setCanResend] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const { API_BASE_URL } = useApp();
+
+  const location = useLocation();
+  const email = location.state?.email || "";
+
+  //  useEffect(() => {
+  //   if (email) {
+  //     localStorage.setItem("email", email);
+  //   }
+  // }, [email]);
 
   // countdown logic
   useEffect(() => {
@@ -20,10 +34,28 @@ const Pin = () => {
     return () => clearInterval(timer);
   }, [timeLeft]);
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setTimeLeft(120);
     setCanResend(false);
-    // 🔥 call your resend API here
+
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/resend-verification-code`,
+        {
+          email,
+        }
+      );
+
+      console.log("Resend Response:", response.data);
+      messageApi.success(
+        response?.data?.message || "Verification code resent successfully!"
+      );
+    } catch (error) {
+      console.error("Resend error:", error.response?.data || error.message);
+      messageApi.error(
+        error.response?.data?.message || "Failed to resend verification code."
+      );
+    }
   };
 
   // format mm:ss
@@ -33,17 +65,46 @@ const Pin = () => {
     return `${m}:${s}`;
   };
 
-  // ✅ OTP onChange
-  const onChange = (value) => {
+  // ✅ OTP onChange + API
+  const onChange = async (value) => {
     console.log("OTP:", value);
+
     if (value.length === 6) {
-      // 🔥 Here you can also call API to verify OTP before navigating
-      navigate("/continue-to-select-country");
+      try {
+        setLoading(true);
+        const response = await axios.post(`${API_BASE_URL}/verify-account`, {
+          code: value,
+        });
+
+        console.log("Verification Response:", response.data);
+
+        if (response.data.success) {
+          messageApi.success(response.data.message || "Account verified!");
+          setTimeout(() => navigate("/personal-information"), 1000);
+        } else {
+          messageApi.error(
+            response.data.message || "Invalid verification code."
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Verification Error:",
+          error.response?.data || error.message
+        );
+        messageApi.error(
+          error.response?.data?.message ||
+            "Verification failed. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen p-8">
+      {contextHolder}
+
       {/* Left Side */}
       <div className="flex flex-col justify-center items-center px-8 md:px-16">
         {/* Logo */}
@@ -61,8 +122,8 @@ const Pin = () => {
           </h1>
 
           <p>
-            We’ve just sent an email verification code to you <br />
-            <Link to="#">Wrong Email</Link>
+            We’ve just sent an email verification code to <b>{email}</b> <br />
+            <Link to="/register">Wrong Email</Link>
           </p>
 
           {/* Form Inputs */}
@@ -74,7 +135,7 @@ const Pin = () => {
               formatter={(str) => str.toUpperCase()}
               onChange={onChange}
               size="large"
-            //   style={{ width: "100px", height: "50px" }}
+              disabled={loading}
             />
 
             {/* Resend + Timer */}

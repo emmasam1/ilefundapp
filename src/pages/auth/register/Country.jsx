@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../../../assets/logo.png";
-import { Input } from "antd";
+import { Input, message } from "antd";
 import { useNavigate } from "react-router";
 import { CheckCircleFilled } from "@ant-design/icons";
 import progress_reg from "../../../assets/progress_reg.png";
@@ -8,9 +8,11 @@ import CustomButton from "../../../components/button/CustomButton";
 
 const Country = () => {
   const navigate = useNavigate();
-  const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const countries = [
     { name: "Afghanistan", code: "AF" },
@@ -210,16 +212,32 @@ const Country = () => {
     { name: "Zimbabwe", code: "ZW" },
   ];
 
-  const filteredCountries = countries.filter((country) =>
+ const filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().startsWith(search.toLowerCase())
   );
 
   const onFinish = () => {
-    navigate('/success')
-  }
+    if (!selected) {
+      messageApi.error("Please select a country!");
+      return;
+    }
+
+    setLoading(true);
+    messageApi.success("Country selected successfully!");
+
+    // ✅ simulate short delay before navigation
+    setTimeout(() => {
+      sessionStorage.setItem("selectedCountry", selected);
+      navigate("/success", {
+        state: { country: selected },
+      });
+      setLoading(false);
+    }, 2000); // ⏳ 2 seconds
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen p-8">
+      {contextHolder}
       {/* Left Side */}
       <div className="flex flex-col justify-center items-center px-8 md:px-16">
         {/* Logo */}
@@ -249,7 +267,7 @@ const Country = () => {
                 key={country.code}
                 onClick={() => {
                   setSearch(country.name); // Show selected name in input
-                  setSelected(country.code); // Store code if needed
+                  setSelected(country.name); // Store code if needed
                   setShowDropdown(false); // New state to hide dropdown
                 }}
                 className={`flex justify-between items-center p-2 cursor-pointer ${
@@ -270,7 +288,7 @@ const Country = () => {
         )}
 
         <div className="mt-5 flex justify-center">
-          <CustomButton label="Select" onClick={onFinish}/>
+          <CustomButton label="Select" onClick={onFinish} loading={loading} />
         </div>
       </div>
 

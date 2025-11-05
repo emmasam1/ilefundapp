@@ -1,28 +1,50 @@
-import React from "react";
+import Reac, { useState } from "react";
 import logo from "../../../assets/logo.png";
-import { Form, Input } from "antd";
+import { Form, Input, message, Button } from "antd";
 import { useNavigate, Link } from "react-router";
-import CustomButton from "../../../components/button/CustomButton";
 import { MdArrowRightAlt } from "react-icons/md";
 import { CheckCircleFilled } from "@ant-design/icons";
+import { useApp } from "../../../context/AppContext.jsx";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+  const { API_BASE_URL, setAuthData } = useApp();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = () => {
-    navigate("/continue-to-signin");
+  const onFinish = async (values) => {
+    setLoading(true)
+    try {
+      const res = await axios.post(`${API_BASE_URL}/login`, values);
+      if (res?.data?.success) {
+        await setAuthData(res.data);
+        messageApi.success(res?.data?.message || "Login successful!");
+        console.log(res)
+        navigate("/enter-pin");
+      } else {
+        messageApi.error(res?.data?.message || "Login failed.");
+      }
+    } catch (error) {
+      messageApi.error(
+        error.response?.data?.message || "Something went wrong."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen p-8">
+      {contextHolder}
+
       {/* Left Side */}
       <div className="flex flex-col justify-center px-8 md:px-16">
-        {/* Logo */}
         <div className="mb-6">
           <img src={logo} alt="Logo" className="w-32 md:w-40" />
         </div>
 
-        <Form layout="vertical" className="max-w-lg w-full">
+        <Form layout="vertical" className="max-w-lg w-full" onFinish={onFinish}>
           <h1 className="mt-2 pb-3 text-3xl md:text-4xl font-bold text-gray-900">
             Welcome back
           </h1>
@@ -30,7 +52,6 @@ const Login = () => {
             Sign into your account
           </p>
 
-          {/* Form Inputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             <Form.Item
               label="Email"
@@ -58,7 +79,6 @@ const Login = () => {
             </Form.Item>
           </div>
 
-          {/* Forgot Password */}
           <p className="font-medium mt-5 text-gray-600">
             Forgot your password?{" "}
             <Link to="#" className="!text-[#0047FF] hover:!text-[#0047FF]">
@@ -66,21 +86,29 @@ const Login = () => {
             </Link>
           </p>
 
-          {/* Login Button */}
           <Form.Item>
-            <CustomButton
+            <Button
+              className="mt-6 !bg-blue-600 hover:!bg-blue-700 w-full md:w-auto !text-white !border-none"
+              loading={loading}
+              htmlType="submit"
+            >
+              Login <MdArrowRightAlt />
+            </Button>
+            {/* <CustomButton
               label="Login"
               icon={<MdArrowRightAlt />}
               className="mt-6 !bg-blue-600 hover:!bg-blue-700 w-full md:w-auto !text-white"
-              type="submit"
-              onClick={onFinish}
-            />
+              htmlType="submit"
+              loading={loading}
+            /> */}
           </Form.Item>
 
-          {/* Create Account */}
           <p className="font-medium mt-6 text-gray-600">
             New Here?{" "}
-            <Link to="register" className="!text-[#0047FF] hover:!text-[#0047FF]">
+            <Link
+              to="register"
+              className="!text-[#0047FF] hover:!text-[#0047FF]"
+            >
               Create Account
             </Link>
           </p>

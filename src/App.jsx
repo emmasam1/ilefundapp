@@ -47,8 +47,8 @@ function App() {
       <Route path="/continue-to-signin" element={<Template />} />
       <Route path="/enter-pin" element={<EnterPin />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/enter-comfrimation-pin" element={<Pin />} />
-      <Route path="/continue-to-select-country" element={<Country />} />
+      <Route path="/enter-confirmation-pin" element={<Pin />} />
+      {/* <Route path="/continue-to-select-country" element={<Country />} /> */}
       <Route path="/success" element={<Success />} />
       <Route path="/personal-information" element={<InactiveDashboard />} />
       <Route path="/registration-success" element={<RegSuccess />} />
