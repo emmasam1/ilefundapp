@@ -75,7 +75,7 @@ const TopUp = () => {
         setTimeout(() => {
           setIsModalOpen(false);
           navigate("/dashboard/wallet");
-        }, 20000);
+        }, 5000);
       } else {
         message.error(res.data.message || "Top-up failed");
       }

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaCheck } from "react-icons/fa";
 import house from "../../assets/house.png";
 import image1 from "../../assets/prop-img.png";
+import { useApp } from "../../context/AppContext.jsx";
+import axios from "axios";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -9,6 +11,9 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router";
 
 const Listing = () => {
+  const { API_BASE_URL, token } = useApp();
+  const [listing, setListing] = useState([]);
+  const [loading, setLoading] = useState(false);
   var settings = {
     dots: true,
     infinite: true,
@@ -17,6 +22,28 @@ const Listing = () => {
     slidesToScroll: 1,
     arrows: false,
   };
+
+  const getListing = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(`https://ilefund-wallet.onrender.com/api/estate/prototypes`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+           "x-service-key": "super_secret_service_key"
+        },
+      });
+
+      console.log("Response:", res.data);
+    } catch (error) {
+      console.error("Error fetching listing:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getListing();
+  }, []);
 
   const savingsGoals = [
     {
@@ -149,7 +176,9 @@ const Listing = () => {
                       </p>
                     </div>
                     <div className="mt-2">
-                      <p className="text-gray-300 text-sm text-right">Weekly deposit</p>
+                      <p className="text-gray-300 text-sm text-right">
+                        Weekly deposit
+                      </p>
                       <h4 className="font-bold text-right">
                         ₦{goal.weeklyDeposit.toLocaleString()}
                       </h4>
@@ -164,7 +193,9 @@ const Listing = () => {
                       </h4>
                     </div>
                     <div>
-                      <p className="text-gray-300 text-sm text-right">Est. Date</p>
+                      <p className="text-gray-300 text-sm text-right">
+                        Est. Date
+                      </p>
                       <h4 className="font-bold text-right">{goal.estDate}</h4>
                     </div>
                   </div>

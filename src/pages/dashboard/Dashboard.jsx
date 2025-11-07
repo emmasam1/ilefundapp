@@ -154,12 +154,12 @@ const Dashboard = () => {
                     return (
                       <div
                         key={wallet._id}
-                        className={`${style.bg} p-5 rounded-lg flex items-center gap-4 bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center`}
+                        className={`${style.bg} py-5 px-2 rounded-lg flex items-center gap-4 bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center`}
                       >
                         <img src={style.img} alt="" className="w-10" />
                         <div>
                           <h1 className="text-white text-lg">{style.label}</h1>
-                          <h1 className="font-bold text-white text-xl sm:text-2xl">
+                          <h1 className="font-bold text-white text-sm sm:text-lg">
                             ₦
                             {wallet.balance?.toLocaleString("en-NG", {
                               minimumFractionDigits: 2,
@@ -222,7 +222,7 @@ const Dashboard = () => {
                       </div>
                       <span
                         className={`${
-                         txn.description?.toLowerCase().includes("funded")
+                          txn.description?.toLowerCase().includes("funded")
                             ? "text-[#34C759]"
                             : "text-[#FF2D55]"
                         } bg-[#E2E3FF] px-5 py-2 text-xs font-semibold rounded-lg`}
