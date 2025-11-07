@@ -4,7 +4,6 @@ import house from "../../assets/house.png";
 import image1 from "../../assets/prop-img.png";
 import { useApp } from "../../context/AppContext.jsx";
 import axios from "axios";
-
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -12,9 +11,10 @@ import { Link } from "react-router";
 
 const Listing = () => {
   const { API_BASE_URL, token } = useApp();
-  const [listing, setListing] = useState([]);
+  const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(false);
-  var settings = {
+
+  const settings = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -26,14 +26,20 @@ const Listing = () => {
   const getListing = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`https://ilefund-wallet.onrender.com/api/estate/prototypes`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-           "x-service-key": "super_secret_service_key"
-        },
-      });
+      const res = await axios.get(
+        `https://ilefund-wallet.onrender.com/api/estate/prototypes`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "x-service-key": "super_secret_service_key",
+          },
+        }
+      );
 
       console.log("Response:", res.data);
+      if (res.data.success && Array.isArray(res.data.data)) {
+        setListings(res.data.data);
+      }
     } catch (error) {
       console.error("Error fetching listing:", error);
     } finally {
@@ -45,6 +51,7 @@ const Listing = () => {
     getListing();
   }, []);
 
+  // Dummy “Active Goals” data for the top slider (kept same as your formal code)
   const savingsGoals = [
     {
       id: 1,
@@ -73,89 +80,30 @@ const Listing = () => {
       estDate: "Jan 2027",
       image: "/images/house3.jpg",
     },
-    {
-      id: 4,
-      title: "Luxury Penthouse",
-      total: 5000000,
-      paid: 1250000,
-      weeklyDeposit: 250000,
-      estDate: "Nov 2027",
-      image: "/images/house4.jpg",
-    },
-    {
-      id: 5,
-      title: "Semi-Detached Duplex",
-      total: 3500000,
-      paid: 875000,
-      weeklyDeposit: 175000,
-      estDate: "Mar 2026",
-      image: "/images/house5.jpg",
-    },
-    {
-      id: 6,
-      title: "Smart Home Villa",
-      total: 4500000,
-      paid: 2250000,
-      weeklyDeposit: 200000,
-      estDate: "Jul 2027",
-      image: "/images/house6.jpg",
-    },
-    {
-      id: 7,
-      title: "Beachfront Apartment",
-      total: 2800000,
-      paid: 840000,
-      weeklyDeposit: 160000,
-      estDate: "Oct 2026",
-      image: "/images/house7.jpg",
-    },
-    {
-      id: 8,
-      title: "Mini Flat",
-      total: 1000000,
-      paid: 200000,
-      weeklyDeposit: 80000,
-      estDate: "Feb 2026",
-      image: "/images/house8.jpg",
-    },
-    {
-      id: 9,
-      title: "Mansion Estate",
-      total: 8000000,
-      paid: 3200000,
-      weeklyDeposit: 400000,
-      estDate: "May 2028",
-      image: "/images/house9.jpg",
-    },
-    {
-      id: 10,
-      title: "Townhouse",
-      total: 2200000,
-      paid: 660000,
-      weeklyDeposit: 110000,
-      estDate: "Sep 2026",
-      image: "/images/house10.jpg",
-    },
   ];
 
   const goalsWithProgress = savingsGoals.map((goal) => ({
     ...goal,
-    progress: ((goal.paid / goal.total) * 100).toFixed(1), // % completed
+    progress: ((goal.paid / goal.total) * 100).toFixed(1),
     remaining: goal.total - goal.paid,
   }));
+
+  // Simple skeleton loader
+  const SkeletonCard = () => (
+    <div className="bg-gray-100 animate-pulse rounded-3xl h-36"></div>
+  );
 
   return (
     <div className="p-4">
       <h1 className="font-bold text-2xl">Property Listing</h1>
 
+      {/* Top Slider Section */}
       <div className="my-10">
         <h1 className="font-bold text-lg mb-4">Active Goals</h1>
 
         <Slider {...settings}>
           {goalsWithProgress.map((goal) => (
             <div key={goal.id} className="px-2">
-              {" "}
-              {/* Add spacing between slides */}
               <div className="relative bg-[url(/src/assets/house_bg.png)] bg-cover bg-no-repeat bg-center text-white rounded-2xl overflow-hidden p-3">
                 <div className="relative z-10">
                   <div className="flex gap-2.5">
@@ -200,7 +148,6 @@ const Listing = () => {
                     </div>
                   </div>
 
-                  {/* Progress Bar */}
                   <div className="w-full bg-gray-700 h-2 rounded-full mt-4">
                     <div
                       className="bg-blue-500 h-2 rounded-full"
@@ -214,190 +161,90 @@ const Listing = () => {
         </Slider>
       </div>
 
+      {/* Listed Properties */}
       <div className="my-10">
         <h1 className="font-bold text-xl mb-5">Listed Properties</h1>
-        <div className="grid md:grid-cols-3 gap-6">
-          <Link
-            to="/dashboard/listing/details"
-            className="no-underline !text-black"
-          >
-            <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200">
-              {/* Left Image */}
-              <div className="relative w-full sm:w-1/3">
-                <img
-                  src={house}
-                  alt="property"
-                  className="w-full h-28 object-cover"
-                />
-                <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
-                  50% Discount
-                </span>
-              </div>
 
-              {/* Right Details */}
-              <div className="flex flex-col justify-between p-4 w-full sm:w-2/3">
-                {/* Title */}
-                <h2 className="text-md font-bold leading-tight">
-                  4 Semi detached-duplex <br /> with 2 room BQ
-                </h2>
-
-                {/* Location */}
-                <p className="text-gray-400 flex items-center gap-2 mt-2">
-                  <FaMapMarkerAlt className="text-xs" />
-                  Big land city Apo hilltop
-                </p>
-
-                {/* Price */}
-                <div className="flex justify-between items-center mt-2">
-                  <h1 className="font-semibold">₦13,000,000</h1>
-                  <h3 className="font-bold">500 SQM</h3>
-                </div>
-
-                {/* Bottom Info */}
-                <div className="flex items-center justify-between mt-4">
-                  <div>
-                    <h3 className="font-bold text-xs">₦1,500,000</h3>
-                    <p className="text-gray-400 text-xs">Weekly deposit</p>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xs">6 Months</h3>
-                    <p className="text-gray-400 text-xs">Duration</p>
-                  </div>
-                </div>
-
-                {/* Footer */}
-                {/* <div className="flex justify-end mt-4">
-                <div className="flex items-center bg-green-600 text-white px-3 py-1 rounded-lg text-xs gap-2">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/79/Coat_of_arms_of_Nigeria.svg"
-                    alt="Nigeria"
-                    className="w-5 h-5"
-                  />
-                  <span>FCDA approved Allocation</span>
-                  <FaCheck />
-                </div>
-              </div> */}
-              </div>
-            </div>
-          </Link>
-
-          <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200">
-            {/* Left Image */}
-            <div className="relative w-full sm:w-1/3">
-              <img
-                src={house}
-                alt="property"
-                className="w-full h-28 object-cover"
-              />
-              <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
-                50% Discount
-              </span>
-            </div>
-
-            {/* Right Details */}
-            <div className="flex flex-col justify-between p-4 w-full sm:w-2/3">
-              {/* Title */}
-              <h2 className="text-md font-bold leading-tight">
-                4 Semi detached-duplex <br /> with 2 room BQ
-              </h2>
-
-              {/* Location */}
-              <p className="text-gray-400 flex items-center gap-2 mt-2">
-                <FaMapMarkerAlt className="text-xs" />
-                Big land city Apo hilltop
-              </p>
-
-              {/* Price */}
-              <div className="flex justify-between items-center mt-2">
-                <h1 className="font-semibold">₦13,000,000</h1>
-                <h3 className="font-bold">500 SQM</h3>
-              </div>
-
-              {/* Bottom Info */}
-              <div className="flex items-center justify-between mt-4">
-                <div>
-                  <h3 className="font-bold text-xs">₦1,500,000</h3>
-                  <p className="text-gray-400 text-xs">Weekly deposit</p>
-                </div>
-                <div>
-                  <h3 className="font-bold text-xs">6 Months</h3>
-                  <p className="text-gray-400 text-xs">Duration</p>
-                </div>
-              </div>
-
-              {/* Footer */}
-              {/* <div className="flex justify-end mt-4">
-                <div className="flex items-center bg-green-600 text-white px-3 py-1 rounded-lg text-xs gap-2">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/79/Coat_of_arms_of_Nigeria.svg"
-                    alt="Nigeria"
-                    className="w-5 h-5"
-                  />
-                  <span>FCDA approved Allocation</span>
-                  <FaCheck />
-                </div>
-              </div> */}
-            </div>
+        {loading ? (
+          <div className="grid md:grid-cols-3 gap-6">
+            {Array(6)
+              .fill(0)
+              .map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
           </div>
-          <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200">
-            {/* Left Image */}
-            <div className="relative w-full sm:w-1/3">
-              <img
-                src={house}
-                alt="property"
-                className="w-full h-28 object-cover"
-              />
-              <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
-                50% Discount
-              </span>
-            </div>
+        ) : listings.length === 0 ? (
+          <p>No properties found.</p>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-6">
+            {listings.map((item) => {
+              const bannerImage = item.files?.find(
+                (file) => file.fileCategory === "banner"
+              )?.url;
 
-            {/* Right Details */}
-            <div className="flex flex-col justify-between p-4 w-full sm:w-2/3">
-              {/* Title */}
-              <h2 className="text-md font-bold leading-tight">
-                4 Semi detached-duplex <br /> with 2 room BQ
-              </h2>
+              return (
+                <Link
+                  key={item._id}
+                  to="/dashboard/listing/details"
+                  state={{ property: item }}
+                  className="no-underline !text-black"
+                >
+                  <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200 hover:shadow-lg transition">
+                    {/* Left Image */}
+                    <div className="relative w-full sm:w-1/3">
+                      <img
+                        src={bannerImage || house}
+                        alt={item.title}
+                        className="w-full !h-full object-cover"
+                      />
+                      {item.hasDiscount && (
+                        <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
+                          {Math.round((item.discount / item.price) * 100)}% Discount
+                        </span>
+                      )}
+                    </div>
 
-              {/* Location */}
-              <p className="text-gray-400 flex items-center gap-2 mt-2">
-                <FaMapMarkerAlt className="text-xs" />
-                Big land city Apo hilltop
-              </p>
+                    {/* Right Details */}
+                    <div className="flex flex-col justify-between p-4 w-full sm:w-2/3">
+                      <h2 className="text-md font-bold leading-tight">
+                        {item.title || "Untitled Property"}
+                      </h2>
 
-              {/* Price */}
-              <div className="flex justify-between items-center mt-2">
-                <h1 className="font-semibold">₦13,000,000</h1>
-                <h3 className="font-bold">500 SQM</h3>
-              </div>
+                      <p className="text-gray-400 flex items-center gap-2 mt-2 text-sm">
+                        <FaMapMarkerAlt className="text-xs" />
+                        {item.neighborhood?.name || "No location"}
+                      </p>
 
-              {/* Bottom Info */}
-              <div className="flex items-center justify-between mt-4">
-                <div>
-                  <h3 className="font-bold text-xs">₦1,500,000</h3>
-                  <p className="text-gray-400 text-xs">Weekly deposit</p>
-                </div>
-                <div>
-                  <h3 className="font-bold text-xs">6 Months</h3>
-                  <p className="text-gray-400 text-xs">Duration</p>
-                </div>
-              </div>
+                      <div className="flex justify-between items-center mt-2">
+                        <h1 className="font-semibold">
+                          ₦{item.price?.toLocaleString()}
+                        </h1>
+                        <h3 className="font-bold text-xs uppercase">
+                          {item.sizeValue} {item.landSize?.unit || "sqm"}
+                        </h3>
+                      </div>
 
-              {/* Footer */}
-              {/* <div className="flex justify-end mt-4">
-                <div className="flex items-center bg-green-600 text-white px-3 py-1 rounded-lg text-xs gap-2">
-                  <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/7/79/Coat_of_arms_of_Nigeria.svg"
-                    alt="Nigeria"
-                    className="w-5 h-5"
-                  />
-                  <span>FCDA approved Allocation</span>
-                  <FaCheck />
-                </div>
-              </div> */}
-            </div>
+                      <div className="flex items-center justify-between mt-4">
+                        <div>
+                          <h3 className="font-bold text-xs">
+                            ₦{item.weeklyDeposit?.toLocaleString() || "N/A"}
+                          </h3>
+                          <p className="text-gray-400 text-xs">Weekly deposit</p>
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-xs">
+                            {item.duration || "6 Months"}
+                          </h3>
+                          <p className="text-gray-400 text-xs">Duration</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
