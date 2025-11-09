@@ -39,6 +39,9 @@ import NotificationSettings from "./pages/profile/NotificationSettings";
 import NextOfKin from "./pages/profile/NextOfKin";
 import ChangePassword from "./pages/profile/ChangePassword";
 import TransactionHistory from "./pages/profile/TransactionHistory";
+import ForgetPassword from "./pages/resetpassword/ForgetPassword";
+import EnterResetOtp from "./pages/resetpassword/EnterResetOtp";
+import EnterNewPassword from "./pages/resetpassword/EnterNewPassword";
 
 function App() {
   return (
@@ -60,6 +63,10 @@ function App() {
       <Route path="/choose-savings-method" element={<SavePlanForm />} />
       <Route path="/top-up-account" element={<TopUp />} />
       <Route path="/Withdraw-funds" element={<Withdrawal />} />
+      <Route path="/reset-password" element={<ForgetPassword />} />
+      <Route path="/reset-password-otp" element={<EnterResetOtp />} />
+      <Route path="/enter-new-password" element={<EnterNewPassword />} />
+
 
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route path="" element={<Dashboard />} />
