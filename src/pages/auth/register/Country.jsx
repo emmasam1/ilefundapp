@@ -236,7 +236,7 @@ const Country = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen p-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-screen p-8">
       {contextHolder}
       {/* Left Side */}
       <div className="flex flex-col justify-center items-center px-8 md:px-16">

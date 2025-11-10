@@ -209,7 +209,7 @@ const FaceId = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
+    <div className="flex flex-col items-center justify-center h-screen bg-white p-6">
       {!photo ? (
         <>
           <h2 className="text-2xl font-bold mb-2">Take a Selfie</h2>
