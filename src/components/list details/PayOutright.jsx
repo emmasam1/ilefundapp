@@ -1,18 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button, Input } from "antd";
 import homeImg from "../../assets/home_img.png";
 import plus_icon from "../../assets/plus.png";
 import arrow from "../../assets/arrow_long_right.png";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
 
 const PayOutright = () => {
   const [amount, setAmount] = useState("");
   const [selectedWallet, setSelectedWallet] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+  const location = useLocation();
+  const { property } = location.state || {};
+  console.log(property);
+    useEffect(() => {
+      if (property) {
+        setLoading(false);
+      }
+    }, [property]);
 
   const wallets = [
     { id: 1, name: "Home Fund", amount: "****87322", color: "bg-blue-500" },
     { id: 2, name: "Debit Card", amount: "₦3,500.00", color: "bg-orange-500" },
   ];
+
+
+    //   {
+    //   "estateCompanyId": "68f20cbbdd001ae54b1a13fb",
+    //   "estateId": "68f20e0cdd001ae54b1a141e",
+    //   "prototypeId": "68fb55b4d5dee6d7ec5daf68",
+    //   "paymentPlanId": "68fb78915cd541d48ae20c0a",
+    //   "paymentMethod": "card",
+    //   "cardId": "683431c0c38218c6bfa9b1de",
+    //   "totalAmount": 800000,
+    //   "balance": 800000
+    // }
+  
+    // const initiatePaypent = async () => {
+    //   const payload = {
+    //     estateCompanyId: property?.company?._id,
+    //     estateId: property?.estate?._id,
+    //     prototypeId: property?._id,
+    //     paymentPlanId: paymentPlan?._id,
+    //   };
+    // };
 
   return (
     <div className="p-4">

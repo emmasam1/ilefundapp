@@ -32,6 +32,8 @@ const Dashboard = () => {
     ],
   };
 
+  const items = [1, 2, 3, 4];
+
   const [messageApi, contextHolder] = message.useMessage();
   const { API_BASE_URL, token } = useApp();
 
@@ -262,28 +264,47 @@ const Dashboard = () => {
             </Link>
           </div>
 
-          <Slider {...settings}>
-            {[1, 2, 3, 4].map((_, i) => (
-              <div
-                key={i}
-                className="h-48 sm:h-52 md:h-56 !w-full sm:!w-64 md:!w-72 rounded-3xl !mr-4 bg-[url(/src/assets/house_bg.png)] bg-cover bg-center p-3"
-              >
-                <p className="font-bold text-lg text-white">4 Bedroom duplex</p>
-                <h1 className="font-bold text-white text-xl sm:text-2xl">
-                  ₦36,540.00
-                </h1>
-                <p className="text-white font-semibold mt-1 text-sm">
-                  out of 2,500,000 (14%)
-                </p>
-                <div className="mt-2">
-                  <h1 className="font-bold text-white text-sm sm:text-base">
-                    ₦2,116,460.00 <span className="font-normal">remaining</span>
-                  </h1>
-                  <Progress percent={30} />
-                </div>
-              </div>
-            ))}
-          </Slider>
+     <Slider {...settings}>
+  {items.map((item, i) => (
+    <div key={i} className="px-2">
+      <div className="h-48 w-full rounded-3xl bg-[url('/src/assets/house_bg.png')] bg-cover bg-center p-4 flex flex-col justify-between">
+        
+        {/* Title */}
+        <div>
+          <p className="text-white font-bold sm:text-lg !text-sm">
+            4 Bedroom duplex
+          </p>
+
+          <h1 className="text-white font-extrabold text-lg sm:text-2xl mt-1">
+            ₦36,540.00
+          </h1>
+
+          <p className="text-white font-medium text-xs sm:text-sm mt-1">
+            out of 2,500,000 (14%)
+          </p>
+        </div>
+
+        {/* Bottom Section */}
+        <div>
+          <h1 className="text-white font-bold text-sm sm:text-base">
+            ₦2,116,460.00{" "}
+            <span className="font-normal">remaining</span>
+          </h1>
+
+          {/* Progress bar */}
+          <Progress
+            percent={30}
+            strokeColor="#ffffff"
+            trailColor="rgba(255,255,255,0.3)"
+            size="small"
+            className="[&_.ant-progress-text]:text-white [&_.ant-progress-text]:!font-bold mt-1"
+          />
+        </div>
+      </div>
+    </div>
+  ))}
+</Slider>
+
 
           {/* Listed Properties */}
           <div className="mt-6">

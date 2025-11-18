@@ -186,7 +186,7 @@ const DashboardLayout = () => {
             {
               key: "5",
               icon: <img src={goals} alt="" className="w-7" />,
-              label: <Link to="/dashboard/goals">Goals</Link>,
+              label: <Link to="/dashboard/goals">Portfolio</Link>,
             },
             {
               key: "6",

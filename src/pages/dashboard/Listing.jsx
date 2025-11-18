@@ -10,7 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router";
 
 const Listing = () => {
-  const { API_BASE_URL, token } = useApp();
+  const { EST_URL, token } = useApp();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -23,11 +23,13 @@ const Listing = () => {
     arrows: false,
   };
 
+  
+
   const getListing = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `https://ilefund-wallet.onrender.com/api/estate/prototypes`,
+        `${EST_URL}/api/estate/prototypes`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -52,41 +54,41 @@ const Listing = () => {
   }, []);
 
   // Dummy “Active Goals” data for the top slider (kept same as your formal code)
-  const savingsGoals = [
-    {
-      id: 1,
-      title: "4 Bedroom Duplex",
-      total: 2500000,
-      paid: 365400,
-      weeklyDeposit: 150000,
-      estDate: "Dec 2026",
-      image: "/images/house1.jpg",
-    },
-    {
-      id: 2,
-      title: "3 Bedroom Bungalow",
-      total: 1800000,
-      paid: 450000,
-      weeklyDeposit: 120000,
-      estDate: "Aug 2026",
-      image: "/images/house2.jpg",
-    },
-    {
-      id: 3,
-      title: "2 Bedroom Apartment",
-      total: 1200000,
-      paid: 300000,
-      weeklyDeposit: 100000,
-      estDate: "Jan 2027",
-      image: "/images/house3.jpg",
-    },
-  ];
+  // const savingsGoals = [
+  //   {
+  //     id: 1,
+  //     title: "4 Bedroom Duplex",
+  //     total: 2500000,
+  //     paid: 365400,
+  //     weeklyDeposit: 150000,
+  //     estDate: "Dec 2026",
+  //     image: "/images/house1.jpg",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "3 Bedroom Bungalow",
+  //     total: 1800000,
+  //     paid: 450000,
+  //     weeklyDeposit: 120000,
+  //     estDate: "Aug 2026",
+  //     image: "/images/house2.jpg",
+  //   },
+  //   {
+  //     id: 3,
+  //     title: "2 Bedroom Apartment",
+  //     total: 1200000,
+  //     paid: 300000,
+  //     weeklyDeposit: 100000,
+  //     estDate: "Jan 2027",
+  //     image: "/images/house3.jpg",
+  //   },
+  // ];
 
-  const goalsWithProgress = savingsGoals.map((goal) => ({
-    ...goal,
-    progress: ((goal.paid / goal.total) * 100).toFixed(1),
-    remaining: goal.total - goal.paid,
-  }));
+  // const goalsWithProgress = savingsGoals.map((goal) => ({
+  //   ...goal,
+  //   progress: ((goal.paid / goal.total) * 100).toFixed(1),
+  //   remaining: goal.total - goal.paid,
+  // }));
 
   // Simple skeleton loader
   const SkeletonCard = () => (
@@ -95,74 +97,12 @@ const Listing = () => {
 
   return (
     <div className="p-4">
-      <h1 className="font-bold text-2xl">Property Listing</h1>
+      {/* <h1 className="font-bold text-2xl">Property Listing</h1> */}
 
-      {/* Top Slider Section */}
-      <div className="my-10">
-        <h1 className="font-bold text-lg mb-4">Active Goals</h1>
-
-        <Slider {...settings}>
-          {goalsWithProgress.map((goal) => (
-            <div key={goal.id} className="px-2">
-              <div className="relative bg-[url(/src/assets/house_bg.png)] bg-cover bg-no-repeat bg-center text-white rounded-2xl overflow-hidden p-3">
-                <div className="relative z-10">
-                  <div className="flex gap-2.5">
-                    <div className="bg-white rounded-md w-20 flex gap-2 items-center px-2">
-                      <img src={image1} alt="" className="w-5" />
-                      <h1 className="text-[#0047FF]">Goal</h1>
-                    </div>
-                    <h2 className="text-lg font-bold">{goal.title}</h2>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <h3 className="text-lg font-extrabold mt-2">
-                        ₦{goal.paid.toLocaleString()}
-                      </h3>
-                      <p className="text-sm text-gray-200">
-                        out of ₦{goal.total.toLocaleString()} ({goal.progress}%)
-                      </p>
-                    </div>
-                    <div className="mt-2">
-                      <p className="text-gray-300 text-sm text-right">
-                        Weekly deposit
-                      </p>
-                      <h4 className="font-bold text-right">
-                        ₦{goal.weeklyDeposit.toLocaleString()}
-                      </h4>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between mt-2">
-                    <div>
-                      <p className="text-gray-300 text-sm">Remaining</p>
-                      <h4 className="font-bold">
-                        ₦{goal.remaining.toLocaleString()}
-                      </h4>
-                    </div>
-                    <div>
-                      <p className="text-gray-300 text-sm text-right">
-                        Est. Date
-                      </p>
-                      <h4 className="font-bold text-right">{goal.estDate}</h4>
-                    </div>
-                  </div>
-
-                  <div className="w-full bg-gray-700 h-2 rounded-full mt-4">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full"
-                      style={{ width: `${goal.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </Slider>
-      </div>
+     
 
       {/* Listed Properties */}
-      <div className="my-10">
+      <div className="">
         <h1 className="font-bold text-xl mb-5">Listed Properties</h1>
 
         {loading ? (
@@ -189,13 +129,13 @@ const Listing = () => {
                   state={{ property: item }}
                   className="no-underline !text-black"
                 >
-                  <div className="bg-white rounded-3xl overflow-hidden flex flex-col sm:flex-row border border-gray-200 hover:shadow-lg transition">
+                  <div className="bg-white rounded-lg overflow-hidden flex flex-col sm:flex-row border border-gray-200 hover:shadow-lg transition">
                     {/* Left Image */}
-                    <div className="relative w-full sm:w-1/3">
+                    <div className="relative h-20 w-full sm:w-1/3">
                       <img
                         src={bannerImage || house}
                         alt={item.title}
-                        className="w-full !h-full object-cover"
+                        className="w-full !h-[107px] object-cover"
                       />
                       {item.hasDiscount && (
                         <span className="absolute top-3 left-3 bg-red-200 text-red-600 font-bold px-3 py-1 rounded-md text-[10px]">
@@ -224,7 +164,7 @@ const Listing = () => {
                         </h3>
                       </div>
 
-                      <div className="flex items-center justify-between mt-4">
+                      {/* <div className="flex items-center justify-between mt-4">
                         <div>
                           <h3 className="font-bold text-xs">
                             ₦{item.weeklyDeposit?.toLocaleString() || "N/A"}
@@ -237,7 +177,7 @@ const Listing = () => {
                           </h3>
                           <p className="text-gray-400 text-xs">Duration</p>
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </Link>

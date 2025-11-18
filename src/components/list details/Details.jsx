@@ -3,21 +3,73 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button, Input, Skeleton } from "antd";
+import { Button, Input, Skeleton, Modal, Divider } from "antd";
 import download from "../../assets/download.png";
 import "leaflet/dist/leaflet.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import axios from "axios";
 import { Link, useLocation } from "react-router";
+import angle_right_black from "../../assets/angle-right-black.png";
+import { useApp } from "../../context/AppContext.jsx";
 
 const Details = () => {
   const [activeTab, setActiveTab] = useState(1);
   const [coords, setCoords] = useState({ lat: 9.082, lng: 8.6753 });
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loadingPaymentPlan, setLoadingPaymentPlan] = useState(false);
+  const [paymentPlan, setPaymentPlan] = useState([]);
+  const { token } = useApp();
 
   const location = useLocation();
   const { property } = location.state || {};
   console.log(property);
+
+  const getPaymentPlan = async () => {
+    const id = property?._id;
+
+    try {
+      setLoadingPaymentPlan(true);
+      const res = await axios.get(
+        `https://wallet-v2-aeqw.onrender.com/api/estate/payment-plans/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setPaymentPlan(res?.data?.data || []);
+
+      console.log("Payment Plan Response:", res.data);
+      if (res.data.success) {
+        setIsModalOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingPaymentPlan(false);
+    }
+  };
+
+//   {
+//   "estateCompanyId": "68f20cbbdd001ae54b1a13fb",
+//   "estateId": "68f20e0cdd001ae54b1a141e",
+//   "prototypeId": "68fb55b4d5dee6d7ec5daf68",
+//   "paymentPlanId": "68fb78915cd541d48ae20c0a",
+//   "paymentMethod": "card",
+//   "cardId": "683431c0c38218c6bfa9b1de",
+//   "totalAmount": 800000,
+//   "balance": 800000
+// }
+
+  const initiatePaypent = async() => {
+    const payload = {
+      estateCompanyId : property?.company?._id,
+      estateId : property?.estate?._id,
+      prototypeId : property?._id,
+      paymentPlanId : property?.paymentPlan?._id,
+    }
+  }
 
   // ✅ Simulate loading delay if property is not yet ready
   useEffect(() => {
@@ -48,6 +100,18 @@ const Details = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const showModal = () => {
+    getPaymentPlan();
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   const tabs = [
@@ -109,7 +173,17 @@ const Details = () => {
           </div>
 
           {/* Property Title */}
-          <h1 className="text-2xl font-bold">{property?.title}</h1>
+          <div className="flex justify-between items-center sticky top-16 bg-white z-50 py-2">
+            <h1 className="text-2xl font-bold">{property?.title}</h1>
+            <Button
+              type="primary"
+              onClick={showModal}
+              loading={loadingPaymentPlan}
+              className="!bg-[#0047FF] !rounded-full !text-white !border-none"
+            >
+              Buy Now
+            </Button>
+          </div>
 
           {/* Tabs */}
           <div className="flex space-x-10 rounded-full w-fit mt-4">
@@ -293,7 +367,47 @@ const Details = () => {
             </MapContainer>
           </div>
 
-          <div className="flex justify-between items-center mt-11">
+          <Modal
+            closable={{ "aria-label": "Custom Close Button" }}
+            open={isModalOpen}
+            footer={null}
+            width={400}
+            onOk={handleOk}
+            onCancel={handleCancel}
+          >
+            <div className="mt-6">
+              <p className="text-center font-bold text-lg">
+                How do you want to start
+              </p>
+
+              <div className="flex flex-col gap-2 mt-4">
+                {paymentPlan?.map((plan, index) => {
+                  const isLast = index === paymentPlan.length - 1;
+
+                  return (
+                    <div key={plan?._id}>
+                      <Link
+                        className="!text-black text-lg flex items-center justify-between cursor-pointer"
+                        to="/dashboard/listing/pay-outright"
+                      >
+                        <div className="flex items-center justify-between cursor-pointer w-full">
+                          {plan?.title}
+                          <img src={angle_right_black} alt="" />
+                        </div>
+                      </Link>
+
+                      {/* Divider only if it's NOT the last item AND there are multiple items */}
+                      {!isLast && paymentPlan.length > 1 && (
+                        <Divider className="!m-0" />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Modal>
+
+          {/* <div className="flex justify-between items-center mt-11">
             <Link to="/dashboard/listing/pay-outright">
               <Button className="!bg-[#0047FF] !text-white !px-10 !rounded-lg !border-none !py-5">
                 Pay Outright
@@ -305,7 +419,7 @@ const Details = () => {
                 Pay Installment
               </Button>
             </Link>
-          </div>
+          </div> */}
         </>
       )}
     </div>

@@ -78,7 +78,7 @@ function App() {
         <Route path="listing" element={<Listing />} />
         <Route path="listing/details" element={<Details />} />
         <Route path="listing/initial-deposit" element={<InitialDeposit />} />
-        <Route path="listing/pay-outright" element={<PayOutright />} />
+        <Route path="listing/pay-now" element={<PayOutright />} />
         <Route path="listing/listing-summary" element={<Summary />} />
         <Route path="goals/goal-detail/:id" element={<GoalDetails />} />
         <Route path="profile" element={<Profile />} />
