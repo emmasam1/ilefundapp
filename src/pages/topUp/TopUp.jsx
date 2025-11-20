@@ -47,11 +47,11 @@ const TopUp = () => {
     let endpoint = "";
 
     if (type === "balling_goal") {
-      endpoint = `${API_BASE_URL}/wallets/fund/balling_goal`;
+      endpoint = `${API_BASE_URL}/api/v1/wallets/fund/balling_goal`;
     } else if (type === "home_goal") {
-      endpoint = `${API_BASE_URL}/wallets/fund/home_goal`;
+      endpoint = `${API_BASE_URL}/api/v1/wallets/fund/home_goal`;
     } else if (type === "rainy_goal") {
-      endpoint = `${API_BASE_URL}/wallets/fund/rainy_goal`;
+      endpoint = `${API_BASE_URL}/api/v1/wallets/fund/rainy_goal`;
     } else {
       message.error("Invalid wallet type");
       setSubmitting(false);
@@ -101,7 +101,7 @@ const TopUp = () => {
   const getCards = async () => {
     setLoadingCards(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}/cards`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/cards`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) setCards(res.data.cards || []);

@@ -33,7 +33,7 @@ const HomeFund = () => {
     setTxnLoading(true);
     try {
       const res = await axios.get(
-        `${API_BASE_URL}/transaction/wallet/${wallet._id}?page=${page}`,
+        `${API_BASE_URL}/api/v1/transaction/wallet/${wallet._id}?page=${page}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

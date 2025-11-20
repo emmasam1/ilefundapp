@@ -52,7 +52,7 @@ const Wallet = () => {
   const getUserWallet = async () => {
     setLoadingWallets(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}/my-wallets`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/my-wallets`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) {
@@ -69,7 +69,7 @@ const Wallet = () => {
   const getAccumulative = async () => {
     setLoadingBalance(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}/wallets/total-saved`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/wallets/total-saved`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTotalBalance(res?.data?.totalAmount || 0);

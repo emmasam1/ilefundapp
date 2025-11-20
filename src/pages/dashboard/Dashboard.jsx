@@ -69,7 +69,7 @@ const Dashboard = () => {
   const getUserWallet = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}/my-wallets`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/my-wallets`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -89,7 +89,7 @@ const Dashboard = () => {
     setTxnLoading(true);
     try {
       const res = await axios.get(
-        `${API_BASE_URL}/transaction/history?page=${page}`,
+        `${API_BASE_URL}/api/v1/transaction/history?page=${page}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

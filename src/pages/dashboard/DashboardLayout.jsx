@@ -50,7 +50,7 @@ const DashboardLayout = () => {
   const getUserProfile = async () => {
     try {
       setLoadingUser(true);
-      const res = await axios.get(`${API_BASE_URL}/profile`, {
+      const res = await axios.get(`${API_BASE_URL}/api/v1/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const firstName = res?.data?.user?.firstName;
@@ -72,7 +72,7 @@ const DashboardLayout = () => {
   const logUserOut = async () => {
     try {
       await axios.post(
-        `${API_BASE_URL}/logout`,
+        `${API_BASE_URL}/api/v1/logout`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );

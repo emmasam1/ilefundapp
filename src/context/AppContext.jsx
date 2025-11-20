@@ -5,8 +5,8 @@ const AppContext = createContext();
 const SECRET_KEY = "ilefund-super-secure-key-256bit"; // 32 chars = 256 bits
 
 export const AppProvider = ({ children }) => {
-  const API_BASE_URL = "https://wallet-v2-aeqw.onrender.com/api/v1";
-  const EST_URL ="https://wallet-v2-aeqw.onrender.com"
+  const API_BASE_URL = "https://wallet-v2-aeqw.onrender.com";
+  // const EST_URL ="https://wallet-v2-aeqw.onrender.com"
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
   const [initialized, setInitialized] = useState(false);
@@ -146,7 +146,7 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider
       value={{
         API_BASE_URL,
-        EST_URL,
+        // EST_URL,
         token,
         user,
         setAuthData: saveAuthData,

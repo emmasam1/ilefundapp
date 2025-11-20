@@ -43,7 +43,7 @@ const EnterPin = () => {
     try {
       setLoading(true);
 
-      const res = await axios.post(`${API_BASE_URL}/pin/login`, payload, {
+      const res = await axios.post(`${API_BASE_URL}/api/v1/pin/login`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

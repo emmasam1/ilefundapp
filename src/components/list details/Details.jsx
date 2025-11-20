@@ -25,51 +25,25 @@ const Details = () => {
   const { property } = location.state || {};
   console.log(property);
 
-  const getPaymentPlan = async () => {
-    const id = property?._id;
+  //   {
+  //   "estateCompanyId": "68f20cbbdd001ae54b1a13fb",
+  //   "estateId": "68f20e0cdd001ae54b1a141e",
+  //   "prototypeId": "68fb55b4d5dee6d7ec5daf68",
+  //   "paymentPlanId": "68fb78915cd541d48ae20c0a",
+  //   "paymentMethod": "card",
+  //   "cardId": "683431c0c38218c6bfa9b1de",
+  //   "totalAmount": 800000,
+  //   "balance": 800000
+  // }
 
-    try {
-      setLoadingPaymentPlan(true);
-      const res = await axios.get(
-        `https://wallet-v2-aeqw.onrender.com/api/estate/payment-plans/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setPaymentPlan(res?.data?.data || []);
-
-      console.log("Payment Plan Response:", res.data);
-      if (res.data.success) {
-        setIsModalOpen(true);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingPaymentPlan(false);
-    }
-  };
-
-//   {
-//   "estateCompanyId": "68f20cbbdd001ae54b1a13fb",
-//   "estateId": "68f20e0cdd001ae54b1a141e",
-//   "prototypeId": "68fb55b4d5dee6d7ec5daf68",
-//   "paymentPlanId": "68fb78915cd541d48ae20c0a",
-//   "paymentMethod": "card",
-//   "cardId": "683431c0c38218c6bfa9b1de",
-//   "totalAmount": 800000,
-//   "balance": 800000
-// }
-
-  const initiatePaypent = async() => {
+  const initiatePaypent = async () => {
     const payload = {
-      estateCompanyId : property?.company?._id,
-      estateId : property?.estate?._id,
-      prototypeId : property?._id,
-      paymentPlanId : property?.paymentPlan?._id,
-    }
-  }
+      estateCompanyId: property?.company?._id,
+      estateId: property?.estate?._id,
+      prototypeId: property?._id,
+      paymentPlanId: property?.paymentPlan?._id,
+    };
+  };
 
   // ✅ Simulate loading delay if property is not yet ready
   useEffect(() => {
@@ -103,7 +77,7 @@ const Details = () => {
   };
 
   const showModal = () => {
-    getPaymentPlan();
+    setIsModalOpen(true);
   };
 
   const handleOk = () => {
@@ -178,7 +152,6 @@ const Details = () => {
             <Button
               type="primary"
               onClick={showModal}
-              loading={loadingPaymentPlan}
               className="!bg-[#0047FF] !rounded-full !text-white !border-none"
             >
               Buy Now
@@ -380,29 +353,39 @@ const Details = () => {
                 How do you want to start
               </p>
 
-              <div className="flex flex-col gap-2 mt-4">
-                {paymentPlan?.map((plan, index) => {
-                  const isLast = index === paymentPlan.length - 1;
+              <div className="flex flex-col">
+                {/* Pay Outright */}
+                <Link
+                  to="/dashboard/listing/pay-now"
+                  state={{ property, text: "Pay Outright" }}
+                  className="!text-black text-lg flex items-center justify-between py-3 cursor-pointer"
+                >
+                  <span>Pay Outright</span>
+                  <img src={angle_right_black} alt="" />
+                </Link>
+                <Divider className="!m-0" />
 
-                  return (
-                    <div key={plan?._id}>
-                      <Link
-                        className="!text-black text-lg flex items-center justify-between cursor-pointer"
-                        to="/dashboard/listing/pay-outright"
-                      >
-                        <div className="flex items-center justify-between cursor-pointer w-full">
-                          {plan?.title}
-                          <img src={angle_right_black} alt="" />
-                        </div>
-                      </Link>
+                {/* Installment */}
+                <Link
+                  to="/dashboard/listing/pay-now"
+                  state={{ property, text: "Pay Installmental" }}
+                  className="!text-black text-lg flex items-center justify-between py-3 cursor-pointer"
+                >
+                  <span>Pay Installmental</span>
+                  <img src={angle_right_black} alt="" />
+                </Link>
+                <Divider className="!m-0" />
 
-                      {/* Divider only if it's NOT the last item AND there are multiple items */}
-                      {!isLast && paymentPlan.length > 1 && (
-                        <Divider className="!m-0" />
-                      )}
-                    </div>
-                  );
-                })}
+                {/* Co-Ownership */}
+                <Link
+                  to="/dashboard/listing/pay-now"
+                  state={{ property, text: "Co-Ownership" }}
+                  className="!text-black text-lg flex items-center justify-between py-3 cursor-pointer"
+                >
+                  <span>Co-Ownership</span>
+                  <img src={angle_right_black} alt="" />
+                </Link>
+                <Divider className="!m-0" />
               </div>
             </div>
           </Modal>

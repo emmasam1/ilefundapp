@@ -10,7 +10,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router";
 
 const Listing = () => {
-  const { EST_URL, token } = useApp();
+  const { API_BASE_URL, token } = useApp();
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +29,7 @@ const Listing = () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${EST_URL}/api/estate/prototypes`,
+        `${API_BASE_URL}/api/estate/prototypes`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

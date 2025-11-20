@@ -38,7 +38,7 @@ const RainyDay = () => {
     setTxnLoading(true);
     try {
       const res = await axios.get(
-        `${API_BASE_URL}/transaction/wallet/${wallet._id}?page=${page}`,
+        `${API_BASE_URL}/api/v1/transaction/wallet/${wallet._id}?page=${page}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -54,6 +54,11 @@ const RainyDay = () => {
     } finally {
       setTxnLoading(false);
     }
+  };
+
+   const handlePageChange = (page) => {
+    setCurrentPage(page);
+    getTransactionHistory(page);
   };
 
   useEffect(() => {
@@ -245,7 +250,7 @@ const RainyDay = () => {
                          current={currentPage}
                          total={totalPages * 10}
                          pageSize={10}
-                         onChange={handlePageChange}
+                          onChange={handlePageChange}
                          showSizeChanger={false}
                        />
                      </div>
