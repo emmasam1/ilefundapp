@@ -24,9 +24,8 @@ const PayOutright = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const { property, text } = location.state;
-
-  // console.log("property:", property);
+  const { property, plan, initialPayment, text } = location.state;
+  // console.log("property", property)
 
   // FETCH ALL DATA
   const getData = async () => {
@@ -74,7 +73,7 @@ const PayOutright = () => {
     if (text === "Pay Outright") {
       // Pick the "one-time" plan
       return paymentPlans.find((plan) => plan.planType === "one-time")?._id;
-    } else if (text === "Pay Installmental") {
+    } else if (text === "Pay installment") {
       // Pick the first "installment" plan
       return paymentPlans.find((plan) => plan.planType === "installment")?._id;
     } else if (text === "Co-Ownership") {
@@ -95,25 +94,49 @@ const PayOutright = () => {
     }
 
     // Validate amount if not "Pay Outright"
-    if (text !== "Pay Outright" && (!amount || Number(amount) <= 0)) {
-      alert("Please enter a valid amount to pay.");
-      return;
-    }
+    // if (text !== "Pay Outright" || text ! && (!amount || Number(amount) <= 0)) {
+    //   alert("Please enter a valid amount to pay.");
+    //   return;
+    // }
 
     const selectedPlanId = getSelectedPlanId();
 
-    const payload = {
-      estateCompanyId: property?.company?._id,
-      estateId: property?.estate?._id,
-      prototypeId: selectedSource, // always the selected ID
-      paymentPlanId: selectedPlanId, // dynamic plan ID
-      paymentMethod: selectedType, // "wallet" or "card"
-      ...(selectedType === "wallet"
-        ? { walletId: selectedSource } // include only if wallet
-        : { cardId: selectedSource }), // include only if card
-      totalAmount: text === "Pay Outright" ? property?.price : Number(amount),
-      balance: text === "Pay Outright" ? property?.price : Number(amount),
-    };
+   // Compute initial payment
+const computedInitialPayment =
+  text === "Pay installment" && plan && property
+    ? (Number(property?.price || 0) * (plan?.initialPayment?.percentage || 0)) / 100
+    : 0;
+
+  const balanceToPay = Number(property?.price || 0) - computedInitialPayment;
+
+  console.log(balanceToPay)
+
+const amountToPay =
+  text === "Pay Outright"
+    ? property?.price
+    : text === "Pay installment"
+    ? computedInitialPayment
+    : Number(amount);
+
+const isBalance = text === "Pay Outright" ? 0 : balanceToPay;
+
+
+
+const payload = {
+  estateCompanyId: property?.company?._id,
+  estateId: property?.estate?._id,
+  prototypeId: property?._id,
+  paymentPlanId: getSelectedPlanId(),
+  paymentMethod: selectedType,
+  ...(selectedType === "wallet"
+    ? { walletId: selectedSource }
+    : { cardId: selectedSource }),
+  totalAmount: amountToPay,
+  balance: isBalance,
+};
+
+
+    console.log("payload",payload)
 
     try {
       setInitiateLoader(true);
@@ -124,7 +147,7 @@ const PayOutright = () => {
       );
       console.log("Payment initiation response:", res);
       navigate("/dashboard/listing/listing-summary", {
-        state: { payment: res?.data?.data, property: property, },
+        state: { payment: res?.data?.data, property: property },
       });
     } catch (error) {
       console.error("Payment initiation error:", error);
@@ -174,12 +197,14 @@ const PayOutright = () => {
           value={
             text === "Pay Outright"
               ? property?.price?.toLocaleString() || "0.00"
-              : amount
+              : text === "Pay Installmental"
+              ? initialPayment?.toLocaleString() || "0.00"
+              : initialPayment?.toLocaleString() || "0.00"
           }
           onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))}
           placeholder="0.00"
           prefix="₦"
-          disabled={text === "Pay Outright"}
+          disabled
           className="text-center !text-3xl !text-black font-bold !w-60 !mb-6 !border-none !shadow-none"
         />
 
@@ -290,8 +315,9 @@ const PayOutright = () => {
             onClick={initiatePayment}
             loading={initiateLoader}
             disabled={
-              !selectedSource ||
-              (text !== "Pay Outright" && (!amount || Number(amount) <= 0))
+              !selectedSource
+              // ((text === "Pay installmental" || text !== "Pay Outright") &&
+              //   (!amount || Number(amount) <= 0))
             }
           >
             Next <img src={arrow} alt="" className="w-5" />

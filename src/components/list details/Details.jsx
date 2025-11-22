@@ -17,39 +17,19 @@ const Details = () => {
   const [coords, setCoords] = useState({ lat: 9.082, lng: 8.6753 });
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [loadingPaymentPlan, setLoadingPaymentPlan] = useState(false);
-  const [paymentPlan, setPaymentPlan] = useState([]);
-  const { token } = useApp();
+  const [paymentPlanModal, setPaymentPlanModal] = useState(false);
+  const [paymentPlans, setPaymentPlans] = useState([]);
+  const [planLoading, setPlanLoading] = useState(false);
+  const { API_BASE_URL, token } = useApp();
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [nextModal, setNextModal] = useState(false);
 
   const location = useLocation();
   const { property } = location.state || {};
-  console.log(property);
+  // console.log(property);
 
-  //   {
-  //   "estateCompanyId": "68f20cbbdd001ae54b1a13fb",
-  //   "estateId": "68f20e0cdd001ae54b1a141e",
-  //   "prototypeId": "68fb55b4d5dee6d7ec5daf68",
-  //   "paymentPlanId": "68fb78915cd541d48ae20c0a",
-  //   "paymentMethod": "card",
-  //   "cardId": "683431c0c38218c6bfa9b1de",
-  //   "totalAmount": 800000,
-  //   "balance": 800000
-  // }
-
-  const initiatePaypent = async () => {
-    const payload = {
-      estateCompanyId: property?.company?._id,
-      estateId: property?.estate?._id,
-      prototypeId: property?._id,
-      paymentPlanId: property?.paymentPlan?._id,
-    };
-  };
-
-  // ✅ Simulate loading delay if property is not yet ready
   useEffect(() => {
-    if (property) {
-      setLoading(false);
-    }
+    if (property) setLoading(false);
   }, [property]);
 
   useEffect(() => {
@@ -59,6 +39,21 @@ const Details = () => {
     }, 1000);
     return () => clearTimeout(delayDebounce);
   }, [property]);
+
+  const getPaymentPlans = async () => {
+    try {
+      setPlanLoading(true);
+      const res = await axios.get(
+        `${API_BASE_URL}/api/estate/payment-plans/${property?._id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (res.data.success) setPaymentPlans(res.data.data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setPlanLoading(false);
+    }
+  };
 
   const searchLocation = async (place) => {
     try {
@@ -76,16 +71,22 @@ const Details = () => {
     }
   };
 
-  const showModal = () => {
-    setIsModalOpen(true);
+  const showModal = () => setIsModalOpen(true);
+  const handleCancel = () => setIsModalOpen(false);
+
+  const openPaymentPlanModal = () => {
+    setPaymentPlanModal(true);
+    setIsModalOpen(false);
+    getPaymentPlans();
   };
 
-  const handleOk = () => {
-    setIsModalOpen(false);
-  };
+  const closePaymentPlanModal = () => setPaymentPlanModal(false);
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const handleSelectPlan = (plan) => {
+    setSelectedPlan(plan);
+    closePaymentPlanModal();
+    setNextModal(true);
+    console.log(plan);
   };
 
   const tabs = [
@@ -104,12 +105,11 @@ const Details = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
-    autoplay: true, // ✅ Auto-slide
-    autoplaySpeed: 3000, // ✅ Every 3 seconds
-    pauseOnHover: true, // ✅ Pause on hover
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
   };
 
-  // ✅ Filter image files
   const imageFiles = property?.files?.filter(
     (file) => file.fileType === "image"
   );
@@ -117,7 +117,6 @@ const Details = () => {
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto">
       {loading ? (
-        // ✅ Skeleton Loader
         <div className="mt-10">
           <Skeleton active paragraph={{ rows: 15 }} />
         </div>
@@ -171,15 +170,15 @@ const Details = () => {
                   <Button
                     onClick={() => setActiveTab(tab.key)}
                     type="text"
-                    className={`px-6 py-2 !rounded-full font-medium transition-colors duration-300
-                    ${isActive ? "!text-white" : "text-white/60"}`}
+                    className={`px-6 py-2 !rounded-full font-medium transition-colors duration-300 ${
+                      isActive ? "!text-white" : "text-white/60"
+                    }`}
                     style={{
                       backgroundColor: isActive ? "#14003C" : "transparent",
                     }}
                   >
                     {tab.label}
                   </Button>
-
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
@@ -198,7 +197,7 @@ const Details = () => {
             })}
           </div>
 
-          {/* ✅ Animated Tab Content */}
+          {/* Tab Content */}
           <div className="mt-6 min-h-[120px]">
             <AnimatePresence mode="wait">
               <motion.div
@@ -219,17 +218,18 @@ const Details = () => {
             <p className="text-gray-600 mt-2">{property?.description}</p>
           </div>
 
-          {/* Property Requirements */}
+          {/* Property Features */}
           <div className="mt-6">
             <h2 className="text-lg font-bold mb-3">Property Requirements</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 my-4">
-              {property?.features?.map((e) => {
-                return (
-                  <Button className="!bg-[#D4D4D4] p-3 !border-none hover:!text-black !rounded-full flex items-center justify-center">
-                    {e.quantity} {e.label}
-                  </Button>
-                );
-              })}
+              {property?.features?.map((e, i) => (
+                <Button
+                  key={i}
+                  className="!bg-[#D4D4D4] p-3 !border-none hover:!text-black !rounded-full flex items-center justify-center"
+                >
+                  {e.quantity} {e.label}
+                </Button>
+              ))}
             </div>
           </div>
 
@@ -245,14 +245,6 @@ const Details = () => {
               <p className="text-gray-600">Square meter</p>
               <h3 className="font-bold">{property?.sizeValue}</h3>
             </div>
-            {/* <div className="p-4 bg-[#D9D9D9] rounded-lg">
-              <p className="text-gray-600">Initial Deposit</p>
-              <h3 className="font-bold">₦1,300,000</h3>
-            </div>
-            <div className="p-4 bg-[#D9D9D9] rounded-lg">
-              <p className="text-gray-600">Duration</p>
-              <h3 className="font-bold">months</h3>
-            </div> */}
             <div className="p-4 bg-[#D9D9D9] rounded-lg">
               <p className="text-gray-600">Title Document</p>
               <h3 className="font-bold">{property?.landTitle?.shortCode}</h3>
@@ -263,68 +255,7 @@ const Details = () => {
             </div>
           </div>
 
-          {/* Get To Know More Section */}
-          <div className="mt-10">
-            <h2 className="text-xl font-bold mb-4">Get To Know More!!!</h2>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="relative rounded-xl overflow-hidden">
-                <img
-                  src="/images/property1.jpg"
-                  alt="Journey View"
-                  className="w-full h-32 object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold">
-                  Journey View of the Property
-                </div>
-              </div>
-              <div className="relative rounded-xl overflow-hidden">
-                <img
-                  src="/images/property2.jpg"
-                  alt="Area View"
-                  className="w-full h-32 object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold">
-                  Area View of the Property
-                </div>
-              </div>
-              <div className="relative rounded-xl overflow-hidden">
-                <img
-                  src="/images/property3.jpg"
-                  alt="Detailed View"
-                  className="w-full h-32 object-cover"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold">
-                  Detailed View of the Property
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <h1 className="font-bold text-2xl mt-8">Opportunity Attachments</h1>
-          <p className="text-gray-400 text-sm">
-            TBC - Makeen Eastern Fund and Makeen Eastern Fund
-          </p>
-
-          <h1 className="font-bold text-2xl mt-8">Files</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-5">
-            <div className="p-6 rounded-full flex justify-between items-center bg-[#D9D9D9] h-9">
-              <p>Make AI Shares Fund</p>
-              <img src={download} alt="" className="w-8" />
-            </div>
-            <div className="p-6 rounded-full flex justify-between items-center bg-[#D9D9D9] h-9">
-              <p>Terms and Condition.....</p>
-              <img src={download} alt="" className="w-8" />
-            </div>
-          </div>
-
-          <h1 className="font-bold text-2xl mt-8">Destination</h1>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-5">
-            <Input
-              placeholder="Insert your Known Location"
-              className="!bg-[#b0b2c3] !border-none !outline-none !py-3 placeholder:!text-black mb-4"
-            />
-          </div>
-
+          {/* Map */}
           <div className="mt-9">
             <h2>Location</h2>
             <MapContainer
@@ -340,21 +271,19 @@ const Details = () => {
             </MapContainer>
           </div>
 
+          {/* Buy Now Modal */}
           <Modal
             closable={{ "aria-label": "Custom Close Button" }}
             open={isModalOpen}
             footer={null}
             width={400}
-            onOk={handleOk}
             onCancel={handleCancel}
           >
             <div className="mt-6">
               <p className="text-center font-bold text-lg">
                 How do you want to start
               </p>
-
               <div className="flex flex-col">
-                {/* Pay Outright */}
                 <Link
                   to="/dashboard/listing/pay-now"
                   state={{ property, text: "Pay Outright" }}
@@ -364,19 +293,14 @@ const Details = () => {
                   <img src={angle_right_black} alt="" />
                 </Link>
                 <Divider className="!m-0" />
-
-                {/* Installment */}
-                <Link
-                  to="/dashboard/listing/pay-now"
-                  state={{ property, text: "Pay Installmental" }}
+                <div
+                  onClick={openPaymentPlanModal}
                   className="!text-black text-lg flex items-center justify-between py-3 cursor-pointer"
                 >
                   <span>Pay Installmental</span>
                   <img src={angle_right_black} alt="" />
-                </Link>
+                </div>
                 <Divider className="!m-0" />
-
-                {/* Co-Ownership */}
                 <Link
                   to="/dashboard/listing/pay-now"
                   state={{ property, text: "Co-Ownership" }}
@@ -390,19 +314,178 @@ const Details = () => {
             </div>
           </Modal>
 
-          {/* <div className="flex justify-between items-center mt-11">
-            <Link to="/dashboard/listing/pay-outright">
-              <Button className="!bg-[#0047FF] !text-white !px-10 !rounded-lg !border-none !py-5">
-                Pay Outright
-              </Button>
-            </Link>
+          {/* Payment Plan Modal */}
+          <Modal
+            title="Select a Payment Plan"
+            closable={{ "aria-label": "Custom Close Button" }}
+            open={paymentPlanModal}
+            footer={null}
+            width={700}
+            onCancel={closePaymentPlanModal}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {planLoading
+                ? [...Array(6)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="p-5 bg-white shadow-sm rounded-2xl border border-gray-200 flex flex-col space-y-3 animate-pulse"
+                    >
+                      <Skeleton.Input
+                        active
+                        size="small"
+                        className="!w-full !h-6 !rounded-md"
+                      />
+                      <Skeleton.Input
+                        active
+                        size="small"
+                        className="!w-3/4 !h-4 !rounded-md"
+                      />
+                      <Skeleton.Input
+                        active
+                        size="small"
+                        className="!w-1/2 !h-4 !rounded-md"
+                      />
+                    </div>
+                  ))
+                : paymentPlans
+                    .filter((plan) => plan.planType !== "one-time")
+                    .map((plan) => (
+                      <div
+                        key={plan._id}
+                        className="p-5 bg-white shadow-sm hover:shadow-md transition rounded-2xl border border-gray-200 cursor-pointer flex flex-col justify-between h-full"
+                      >
+                        <h1 className="font-semibold text-[17px] text-gray-900 group-hover:text-[#0047FF] transition">
+                          {plan.title}
+                        </h1>
+                        <div className="border-t border-gray-100 my-3" />
+                        <p className="text-gray-500 text-sm mt-1">
+                          Duration:{" "}
+                          <span className="font-medium">
+                            {plan.durationLabel}
+                          </span>
+                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-[#0047FF] font-bold text-lg">
+                            {plan.initialPayment?.percentage}%
+                          </p>
+                          <p className="text-gray-600 text-sm">
+                            Initial Deposit
+                          </p>
+                        </div>
+                        <Button
+                          onClick={() => handleSelectPlan(plan)}
+                          className="!bg-[#0047FF] !text-white !rounded-full !w-full !py-5 !mt-4 hover:!opacity-90 transition"
+                        >
+                          Select Plan
+                        </Button>
+                      </div>
+                    ))}
+            </div>
+          </Modal>
 
-            <Link to="/dashboard/listing/initial-deposit">
-              <Button className="!bg-[#12033A] !text-white !px-10 !rounded-lg !border-none !py-5">
-                Pay Installment
-              </Button>
-            </Link>
-          </div> */}
+          {/* Selected Plan Details Modal */}
+          <Modal
+            title="Plan Details"
+            open={nextModal}
+            footer={null}
+            onCancel={() => setNextModal(false)}
+            width={500}
+          >
+            {selectedPlan && (
+              <div className="space-y-3">
+                <h1 className="font-bold text-xl">{selectedPlan.title}</h1>
+
+                {/* Price, Interest, Default */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4 p-2 my-3">
+                  <div className="border-r">
+                    <p className="text-gray-500 text-center">Price</p>
+                    <p className="font-bold text-center">
+                      ₦{Number(property?.price).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="border-r">
+                    <p className="text-gray-500 text-center">Interest</p>
+                    <p className="font-bold text-center">
+                      {selectedPlan?.interestPercentage}%
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-gray-500 text-center">Default</p>
+                    <p className="font-bold text-center">
+                      {selectedPlan?.defaultPenaltyPercentage}%
+                    </p>
+                  </div>
+                </div>
+
+                {/* Payment Breakdown */}
+                {(() => {
+                  const price = Number(property?.price || 0);
+                  const initialPercentage =
+                    selectedPlan?.initialPayment?.percentage || 0;
+                  const initialPayment = (price * initialPercentage) / 100;
+
+                  // Remaining balance
+                  const remainingAmount = price - initialPayment;
+
+                  // Subtract 1 because initial payment is already counted
+                  const numberOfRemainingInstallments = Math.max(
+                    (selectedPlan?.installments || 1) - 1,
+                    0
+                  );
+
+                  const installmentAmount =
+                    numberOfRemainingInstallments > 0
+                      ? remainingAmount / numberOfRemainingInstallments
+                      : 0;
+
+                  return (
+                    <div className="space-y-2">
+                      {/* Initial Payment */}
+                      <div className="bg-gray-100 px-4 py-2 rounded-full flex justify-between items-center">
+                        <h1 className="font-semibold text-sm">1 Installment</h1>
+                        <p className="text-gray-900 font-bold text-sm">
+                          ₦{initialPayment.toLocaleString()}
+                        </p>
+                      </div>
+
+                      {/* Remaining Installments */}
+                      {Array.from(
+                        { length: numberOfRemainingInstallments },
+                        (_, i) => (
+                          <div
+                            key={i}
+                            className="bg-gray-100 px-4 py-2 rounded-full flex justify-between items-center"
+                          >
+                            <h1 className="font-semibold text-sm">
+                              {i + 2} Installment
+                            </h1>
+                            <p className="text-gray-900 font-bold text-sm">
+                              ₦{installmentAmount.toLocaleString()}
+                            </p>
+                          </div>
+                        )
+                      )}
+
+                      {/* Continue Button */}
+                      <Link
+                        to="/dashboard/listing/pay-now"
+                        state={{
+                          plan: selectedPlan,
+                          property,
+                          initialPayment, // first installment
+                          text: "Pay installment",
+                        }}
+                      >
+                        <Button className="!bg-[#0047FF] !text-white !rounded-full !w-full !py-5 !mt-6 hover:!opacity-90 transition">
+                          Continue
+                        </Button>
+                      </Link>
+                    </div>
+                  );
+                })()}
+              </div>
+            )}
+          </Modal>
         </>
       )}
     </div>

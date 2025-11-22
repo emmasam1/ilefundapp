@@ -27,7 +27,7 @@ const Summary = () => {
   // console.log("Payment data:", API_BASE_URL);
   // console.log("property data:", property);
 
-  console.log(payment?.payment?._id);
+  // console.log(payment);
 
   useEffect(() => {
     if (payment?.payment?.createdAt) {
@@ -49,7 +49,6 @@ const Summary = () => {
     if (!token) return;
   }, [token]);
 
-  console.log(token);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -83,10 +82,11 @@ const Summary = () => {
 
     // console.log("Payment Response:", res.data);
     showModal();
-
+    
     setTimeout(() => {
       setIsModalOpen(false);
     }, 10000);
+    navigate("/dashboard/listing");
   } catch (error) {
     console.log("Payment error:", error.response?.data || error.message);
   } finally {
@@ -119,21 +119,21 @@ const Summary = () => {
         <div className="bg-[#0047FF] p-4 rounded-lg  bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center">
           <p className="text-sm text-white">Current Deposit</p>
           <p className="text-xl font-bold text-white">
-            ₦{payment?.estimatedCommitment?.toLocaleString()}
+            ₦{payment?.payment?.totalAmount.toLocaleString()}
           </p>
         </div>
 
         {payment?.planSnapshot?.planType !== "one-time" && (
           <div className="bg-[#12033A] p-4 rounded-lg bg-[url(/src/assets/card_bg_2.png)] bg-cover bg-center">
             <p className="text-sm text-white">Outstanding Amount</p>
-            <p className="text-xl font-bold text-white">₦10,000,000</p>
+            <p className="text-xl font-bold text-white">₦{payment?.payment?.balance?.toLocaleString()}</p>
           </div>
         )}
 
         <div className="bg-[#F2F3FA] p-4 rounded-lg border-[#B0B2C3] border-2">
           <p className="text-sm text-gray-500">Property Value</p>
           <p className="text-xl font-bold text-[#000]">
-            ₦{payment?.estimatedCommitment?.toLocaleString()}
+            ₦{property?.price?.toLocaleString()}
           </p>
         </div>
 
@@ -157,7 +157,7 @@ const Summary = () => {
         {payment?.planSnapshot?.planType !== "one-time" && (
           <div className="bg-[#F2F3FA] p-4 rounded-lg border-[#B0B2C3] border-2">
             <p className="text-sm text-gray-500">Duration</p>
-            <p className="text-xl font-bold text-[#000]">6 months</p>
+            <p className="text-xl font-bold text-[#000]">{payment?.payment?.planSnapshot?.durationLabel}</p>
           </div>
         )}
 
@@ -167,9 +167,9 @@ const Summary = () => {
             <p className="text-sm text-gray-500">Percentage</p>
           </div>
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-bold text-[#000]">
+            {/* <p className="text-sm font-bold text-[#000]">
               ₦{payment?.estimatedCommitment?.toLocaleString()}
-            </p>
+            </p> */}
             <p className="text-[#0047FF] text-sm font-bold">
               {payment?.planSnapshot?.initialPayment?.percentage}%
             </p>
