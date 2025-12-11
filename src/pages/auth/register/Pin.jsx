@@ -40,7 +40,7 @@ const Pin = () => {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/resend-verification-code`,
+        `${API_BASE_URL}/api/v1/resend-verification-code`,
         {
           email,
         }
