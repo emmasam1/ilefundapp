@@ -301,7 +301,7 @@ const InactiveDashboard = () => {
 
   const nextStep = async () => {
     console.log("start")
-    if (!token) return;
+    // if (!token) return;
     console.log(token)
     setLoading(true);
     try {
@@ -330,8 +330,8 @@ const InactiveDashboard = () => {
           phone: values.phone || formData.phone, // or add real phone input
         };
 
-        // console.log("Submitting payload:", payload);
-        // console.log("this is the token:", token);
+        console.log("Submitting payload:", payload);
+        console.log("this is the token:", token);
 
         try {
           const res = await axios.post(
