@@ -52,8 +52,10 @@ const InactiveDashboard = () => {
   const [selected, setSelected] = useState(null);
   const [pinModal, setPinModal] = useState("");
 
-  const { API_BASE_URL, token } = useApp();
+  const { API_BASE_URL } = useApp();
   // console.log(token)
+  const token = sessionStorage.getItem("token");
+  // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2IyZjgwZmY1ZTFkZWQ3NGM2NWEwMSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY1NDg2NDY1LCJleHAiOjE3NjYwOTEyNjV9.iOzNnIdfd1B9t4-0zecc-0wpPMLrit-jqilLxfPOINk'
 
   const navigate = useNavigate();
 
@@ -300,9 +302,8 @@ const InactiveDashboard = () => {
   }, [token])
 
   const nextStep = async () => {
-    console.log("start")
-    // if (!token) return;
-    console.log(token)
+
+    if (!token) return;
     setLoading(true);
     try {
       const values = await form.validateFields();
