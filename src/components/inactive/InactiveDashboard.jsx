@@ -300,7 +300,9 @@ const InactiveDashboard = () => {
   }, [token])
 
   const nextStep = async () => {
+    console.log("start")
     if (!token) return;
+    console.log(token)
     setLoading(true);
     try {
       const values = await form.validateFields();
