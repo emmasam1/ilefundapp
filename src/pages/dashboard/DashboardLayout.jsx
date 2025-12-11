@@ -18,7 +18,7 @@ import {
   message,
 } from "antd";
 import { Outlet, Link, useLocation, useNavigate } from "react-router";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/ilefund-Logo-long.png";
 import userIcon from "../../assets/User.png";
 import wallet from "../../assets/wallet.png";
 import listing from "../../assets/listing.png";

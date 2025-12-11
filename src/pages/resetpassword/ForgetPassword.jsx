@@ -3,7 +3,7 @@ import { Form, Input, message, Button } from "antd";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/ilefund-Logo-long.png";
 import { useApp } from "../../context/AppContext.jsx";
 
 const ForgetPassword = () => {
@@ -74,7 +74,7 @@ const ForgetPassword = () => {
               <Input
                 placeholder="Enter your email"
                 type="email"
-                className="w-full !bg-gray-100 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
+                className="w-full h-12 !bg-gray-300 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
               />
             </Form.Item>
           </div>
@@ -93,7 +93,7 @@ const ForgetPassword = () => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center justify-center bg-[#0047FF]">
+      <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
         <div className="text-white p-8 md:p-12 max-w-md">
           <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
             ILEFUND <br /> Investment and <br /> Land Ownership

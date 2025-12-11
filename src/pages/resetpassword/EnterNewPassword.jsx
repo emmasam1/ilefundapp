@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/ilefund-Logo-long.png";
 import { Form, Input, message, Button, Modal } from "antd";
 import { useNavigate, useLocation } from "react-router";
 import { MdArrowRightAlt } from "react-icons/md";
@@ -87,7 +87,7 @@ const EnterNewPassword = () => {
             >
               <Input.Password
                 placeholder="Enter new password"
-                className="w-full !bg-gray-100 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
+                className="w-full h-12 !bg-gray-300 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
               />
             </Form.Item>
 
@@ -109,7 +109,7 @@ const EnterNewPassword = () => {
             >
               <Input.Password
                 placeholder="Confirm password"
-                className="w-full !bg-gray-100 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
+                className="w-full !bg-gray-300 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
               />
             </Form.Item>
           </div>
@@ -154,7 +154,7 @@ const EnterNewPassword = () => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center justify-center bg-[#0047FF]">
+      <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
         <div className="text-white p-8 md:p-12 max-w-md">
           <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
             ILEFUND <br /> Investment and <br /> Land Ownership

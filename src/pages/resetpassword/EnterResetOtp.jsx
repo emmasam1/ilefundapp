@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/ilefund-Logo-long.png";
 import { Form, Button, Input, message } from "antd";
 import { useNavigate, Link, useLocation } from "react-router";
 import { CheckCircleFilled } from "@ant-design/icons";

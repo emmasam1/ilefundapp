@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import { MdArrowRightAlt } from "react-icons/md";
 import { CheckCircleFilled } from "@ant-design/icons";
 import CustomButton from "../../components/button/CustomButton";
-import logo from "../../assets/new_logo.png";
+import logo from "../../assets/ilefund-Logo-long.png";
 import Deposit from "../../assets/Deposit.png";
 import lightIcon from "../../assets/light_icon_1.png";
 import "./style.css";
