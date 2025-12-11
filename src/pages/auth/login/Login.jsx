@@ -21,7 +21,8 @@ const Login = () => {
         await setAuthData(res.data);
         messageApi.success(res?.data?.message || "Login successful!");
         console.log(res)
-        navigate("/enter-pin");
+        // navigate("/enter-pin");
+        setTimeout(() => navigate("/dashboard"), 700);
       } else {
         messageApi.error(res?.data?.message || "Login failed.");
       }

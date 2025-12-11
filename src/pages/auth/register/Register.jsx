@@ -33,7 +33,7 @@ const Register = () => {
     // Optional delay for smoother UX
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const response = await axios.post(`${API_BASE_URL}/register`, {
+    const response = await axios.post(`${API_BASE_URL}/api/v1/register`, {
       email: values.email,
     });
 
