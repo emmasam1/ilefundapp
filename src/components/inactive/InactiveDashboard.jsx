@@ -333,7 +333,7 @@ const InactiveDashboard = () => {
 
         try {
           const res = await axios.post(
-            `${API_BASE_URL}/continue-registration`,
+            `${API_BASE_URL}/api/v1/continue-registration`,
             payload,
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -367,7 +367,7 @@ const InactiveDashboard = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${API_BASE_URL}/setup/pin`, payload, {
+      const res = await axios.post(`${API_BASE_URL}/api/v1/setup/pin`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
