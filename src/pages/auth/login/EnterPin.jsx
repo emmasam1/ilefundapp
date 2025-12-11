@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../../assets/logo.png";
+import logo from "../../../assets/ilefund-Logo-long.png";
 import { Form, Button, message } from "antd";
 import { useNavigate, Link } from "react-router";
 import { CheckCircleFilled } from "@ant-design/icons";
@@ -140,7 +140,7 @@ const EnterPin = () => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center justify-center bg-[#0047FF]">
+      <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
         <div className="text-white p-8 md:p-12 max-w-md">
           <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
             ILEFUND <br /> Investment and <br /> Land Ownership

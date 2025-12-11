@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Modal, Button } from "antd";
 import Webcam from "react-webcam";
 import { motion } from "framer-motion";
-import logo from "../../../assets/new_logo.png";
+import logo from "../../../assets/ilefund-Logo-long.png";
 import cross from "../../../assets/plus_blue.png";
 import check from "../../../assets/check.png";
 import arrow from "../../../assets/angle-right.png";

@@ -19,7 +19,7 @@ import {
 import { HiArrowLongRight } from "react-icons/hi2";
 import { useNavigate } from "react-router";
 
-import logo from "../../../assets/new_logo.png";
+import logo from "../../../assets/ilefund-Logo-long.png";
 import user from "../../../assets/User.png";
 import wallet from "../../../assets/wallet.png";
 import listing from "../../../assets/listing.png";
