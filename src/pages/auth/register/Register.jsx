@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import logo from "../../../assets/ilefund-Logo-long.png";
+import React, { useEffect, useRef, useState } from "react";
+import logo from "../../../assets/logo.png";
 import { Form, Input, message, Modal, Divider, Button } from "antd";
-import { useNavigate, Link } from "react-router";
+import { useNavigate, Link, useSearchParams } from "react-router";
 import CustomButton from "../../../components/button/CustomButton";
 import { MdArrowRightAlt } from "react-icons/md";
 import { CheckCircleFilled } from "@ant-design/icons";
@@ -11,11 +11,40 @@ import { useApp } from "../../../context/AppContext.jsx";
 import axios from "axios";
 
 const Register = () => {
-  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
-  const { API_BASE_URL } = useApp();
+   const autoSubmittedRef = useRef(false); 
+ const navigate = useNavigate();
+  const { API_BASE_URL } = useApp?.() || {
+    API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
+  };
+  
+  const [form] = Form.useForm();
+   const [searchParams] = useSearchParams();
+
+
+
+    useEffect(() => {
+  if (autoSubmittedRef.current) return;
+
+  const email = searchParams.get("email");
+
+  if (email) {
+    console.log("📩 Email from URL:", email);
+
+    // 1️⃣ Put email inside the form
+    form.setFieldsValue({ email });
+
+    // 2️⃣ Mark that we are auto-submitting once
+    autoSubmittedRef.current = true;
+
+    // 3️⃣ Trigger onFinish with values.email
+    setTimeout(() => {
+      onFinish({ email }); // <-- THIS IS THE FIX
+    }, 300);
+  }
+}, [searchParams, form]);
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -27,72 +56,176 @@ const Register = () => {
     setIsModalOpen(false);
   };
 
-  const onFinish = async (values) => {
-  setLoading(true);
-  try {
-    // Optional delay for smoother UX
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+  useEffect(() => {
+  const savedEmail = localStorage.getItem("email");
 
-    const response = await axios.post(`${API_BASE_URL}/register`, {
-      email: values.email,
-    });
-
-    if (!response.data) throw new Error("No response data from server");
-
-    const { token, user, message, otpVerified, isPassword } = response.data;
-    console.log("🔹 Server Response:", response.data);
-
-    // ✅ Normalize to real booleans
-    const otpVerifiedBool =
-      otpVerified === true || otpVerified === "true" || otpVerified === 1;
-    const isPasswordBool =
-      isPassword === true || isPassword === "true" || isPassword === 1;
-
-    // ✅ Save token securely
-    if (token) {
-      sessionStorage.setItem("token", token);
-      console.log("✅ Token saved to sessionStorage");
-    }
-
-    // ✅ Always save email
-    localStorage.setItem("email", values.email);
-    console.log("📩 Email saved to localStorage:", values.email);
-
-    // ✅ Close any open AntD modal
-    if (window.Modal) window.Modal.destroyAll?.();
-
-    // ✅ Navigation logic (no state passed)
-    if (otpVerifiedBool && !isPasswordBool) {
-      // Case 1: Email verified but password not set
-      messageApi.info("Email verified. Continue your registration.");
-      console.log("➡️ Navigating to /personal-information");
-      navigate("/personal-information", { replace: true });
-    } else if (!otpVerifiedBool && !isPasswordBool) {
-      // Case 2: Email exists but not verified
-      messageApi.success(message || "Verification email sent. Check your inbox.");
-      console.log("➡️ Navigating to /enter-confirmation-pin");
-      navigate("/enter-confirmation-pin", { replace: true });
-    } else if (!otpVerifiedBool && isPasswordBool) {
-      // Case 3: User already registered but OTP pending
-      messageApi.warning("Please verify your email before continuing.");
-      console.log("➡️ Navigating to /enter-confirmation-pin");
-      navigate("/enter-confirmation-pin", { replace: true });
-    } else {
-      // Case 4: Registration complete
-      messageApi.success(message || "Registration complete!");
-      console.log("➡️ Navigating to /personal-information");
-      navigate("/personal-information", { replace: true });
-    }
-  } catch (error) {
-    console.error("❌ Registration error:", error.response?.data || error.message);
-    const errorMsg =
-      error.response?.data?.message ||
-      "Registration failed. Please try again.";
-    messageApi.error(errorMsg);
-  } finally {
-    setLoading(false);
+  if (savedEmail) {
+    onFinish({ email: savedEmail }); // auto trigger
   }
-};
+}, []);
+
+const onFinish = async (values) => {
+    setLoading(true);
+
+    try {
+      await new Promise((r) => setTimeout(r, 500));
+
+      const response = await axios.post(`${API_BASE_URL}/api/v1/register`, {
+        email: values.email,
+      });
+
+      if (!response.data) throw new Error("No response data");
+      const { token, message: msg, otpVerified, isPassword } = response.data;
+
+      const otpVerifiedBool =
+        otpVerified === true || otpVerified === "true" || otpVerified === 1;
+      const isPasswordBool =
+        isPassword === true || isPassword === "true" || isPassword === 1;
+
+      if (token) sessionStorage.setItem("token", token);
+      localStorage.setItem("email", values.email);
+
+      if (window.Modal) window.Modal.destroyAll?.();
+
+      // ---- Navigation Logic ----
+      if (otpVerifiedBool && !isPasswordBool) {
+        messageApi.info("Email verified. Continue your registration.");
+        navigate("/personal-information", { replace: true });
+      } else if (!otpVerifiedBool && !isPasswordBool) {
+        messageApi.success(msg || "Verification email sent.");
+        navigate("/enter-confirmation-pin", { replace: true });
+      } else if (!otpVerifiedBool && isPasswordBool) {
+        messageApi.warning("Please verify your email.");
+        navigate("/enter-confirmation-pin", { replace: true });
+      } else {
+        messageApi.success(msg || "Registration complete!");
+        navigate("/personal-information", { replace: true });
+      }
+    } catch (err) {
+      const errorMsg =
+        err.response?.data?.message ||
+        "Registration failed. Please try again.";
+      messageApi.error(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+// const onFinish = async (values) => {
+//   setLoading(true);
+
+//   try {
+//     await new Promise((resolve) => setTimeout(resolve, 1500));
+
+//     const response = await axios.post(`${API_BASE_URL}/api/v1/register`, {
+//       email: values.email,
+//     });
+
+//     if (!response.data) throw new Error("No response data from server");
+
+//     const { token, user, message, otpVerified, isPassword } = response.data;
+
+//     const otpVerifiedBool = otpVerified === true || otpVerified === "true" || otpVerified === 1;
+//     const isPasswordBool = isPassword === true || isPassword === "true" || isPassword === 1;
+
+//     if (token) {
+//       sessionStorage.setItem("token", token);
+//     }
+
+//     localStorage.setItem("email", values.email);
+
+//     if (window.Modal) window.Modal.destroyAll?.();
+
+//     if (otpVerifiedBool && !isPasswordBool) {
+//       messageApi.info("Email verified. Continue your registration.");
+//       navigate("/personal-information", { replace: true });
+//     } else if (!otpVerifiedBool && !isPasswordBool) {
+//       messageApi.success(message || "Verification email sent.");
+//       navigate("/enter-confirmation-pin", { replace: true });
+//     } else if (!otpVerifiedBool && isPasswordBool) {
+//       messageApi.warning("Please verify your email.");
+//       navigate("/enter-confirmation-pin", { replace: true });
+//     } else {
+//       messageApi.success(message || "Registration complete!");
+//       navigate("/personal-information", { replace: true });
+//     }
+//   } catch (error) {
+//     console.error("Error:", error.response?.data || error.message);
+//     messageApi.error(error.response?.data?.message || "Registration failed.");
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+
+//   const onFinish = async (values) => {
+//   setLoading(true);
+//   try {
+//     // Optional delay for smoother UX
+//     await new Promise((resolve) => setTimeout(resolve, 1500));
+
+//     const response = await axios.post(`${API_BASE_URL}/api/v1/register`, {
+//       email: values.email,
+//     });
+
+//     if (!response.data) throw new Error("No response data from server");
+
+//     const { token, user, message, otpVerified, isPassword } = response.data;
+//     console.log("🔹 Server Response:", response.data);
+
+//     // ✅ Normalize to real booleans
+//     const otpVerifiedBool =
+//       otpVerified === true || otpVerified === "true" || otpVerified === 1;
+//     const isPasswordBool =
+//       isPassword === true || isPassword === "true" || isPassword === 1;
+
+//     // ✅ Save token securely
+//     if (token) {
+//       sessionStorage.setItem("token", token);
+//       console.log("✅ Token saved to sessionStorage");
+//     }
+
+//     // ✅ Always save email
+//     localStorage.setItem("email", values.email);
+//     console.log("📩 Email saved to localStorage:", values.email);
+
+//     // ✅ Close any open AntD modal
+//     if (window.Modal) window.Modal.destroyAll?.();
+
+//     // ✅ Navigation logic (no state passed)
+//     if (otpVerifiedBool && !isPasswordBool) {
+//       // Case 1: Email verified but password not set
+//       messageApi.info("Email verified. Continue your registration.");
+//       console.log("➡️ Navigating to /personal-information");
+//       navigate("/personal-information", { replace: true });
+//     } else if (!otpVerifiedBool && !isPasswordBool) {
+//       // Case 2: Email exists but not verified
+//       messageApi.success(message || "Verification email sent. Check your inbox.");
+//       console.log("➡️ Navigating to /enter-confirmation-pin");
+//       navigate("/enter-confirmation-pin", { replace: true });
+//     } else if (!otpVerifiedBool && isPasswordBool) {
+//       // Case 3: User already registered but OTP pending
+//       messageApi.warning("Please verify your email before continuing.");
+//       console.log("➡️ Navigating to /enter-confirmation-pin");
+//       navigate("/enter-confirmation-pin", { replace: true });
+//     } else {
+//       // Case 4: Registration complete
+//       messageApi.success(message || "Registration complete!");
+//       console.log("➡️ Navigating to /personal-information");
+//       navigate("/personal-information", { replace: true });
+//     }
+//   } catch (error) {
+//     console.error("❌ Registration error:", error.response?.data || error.message);
+//     const errorMsg =
+//       error.response?.data?.message ||
+//       "Registration failed. Please try again.";
+//     messageApi.error(errorMsg);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 
 
   return (
@@ -107,9 +240,10 @@ const Register = () => {
           </div>
           <img src={progress_reg} alt="" className="w-15 my-5" />
           <Form
-            layout="vertical"
-            className="max-w-lg w-full"
-            onFinish={onFinish}
+            form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          initialValues={{ email: "" }}
           >
             <h1 className="mt-2 pb-3 text-3xl md:text-4xl font-bold text-gray-900">
               Getting Started
@@ -126,7 +260,7 @@ const Register = () => {
                 <Input
                   placeholder="Enter your email"
                   type="email"
-                  className="w-full h-12 !bg-gray-300 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
+                  className="w-full !bg-gray-100 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
                 />
               </Form.Item>
             </div>
@@ -144,7 +278,7 @@ const Register = () => {
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  className="mt-6 w-full h-12 md:w-auto !bg-blue-600 hover:!bg-blue-700 !text-white flex items-center justify-center gap-2"
+                  className="mt-6 w-full md:w-auto !bg-blue-600 hover:!bg-blue-700 !text-white flex items-center justify-center gap-2"
                 >
                   Send Code <MdArrowRightAlt size={30} />
                 </Button>
@@ -212,7 +346,7 @@ const Register = () => {
         </div>
 
         {/* Right Side */}
-        <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
+        <div className="hidden md:flex items-center justify-center bg-[#0047FF]">
           <div className="text-white p-8 md:p-12 max-w-md">
             <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
               ILEFUND <br /> Investment and <br /> Land Ownership
@@ -249,3 +383,134 @@ const Register = () => {
 };
 
 export default Register;
+
+// import React, { useEffect, useRef, useState } from "react";
+// import { Form, Input, Button, message } from "antd";
+// import axios from "axios";
+// import { useNavigate, useSearchParams } from "react-router-dom";
+// import { useApp } from "../../../context/AppContext";
+
+
+// const RegistrationPage = () => {
+//   const [form] = Form.useForm();
+//   const [loading, setLoading] = useState(false);
+//   const [messageApi, contextHolder] = message.useMessage();
+
+//   const autoSubmittedRef = useRef(false); 
+//   const navigate = useNavigate();
+//   const { API_BASE_URL } = useApp?.() || {
+//     API_BASE_URL: process.env.REACT_APP_API_BASE_URL,
+//   };
+
+//   const [searchParams] = useSearchParams();
+
+//   // ---------------------------
+//   //   AUTO–SUBMIT HANDLER
+//   // ---------------------------
+//  useEffect(() => {
+//   if (autoSubmittedRef.current) return;
+
+//   const email = searchParams.get("email");
+
+//   if (email) {
+//     console.log("📩 Email from URL:", email);
+
+//     // 1️⃣ Put email inside the form
+//     form.setFieldsValue({ email });
+
+//     // 2️⃣ Mark that we are auto-submitting once
+//     autoSubmittedRef.current = true;
+
+//     // 3️⃣ Trigger onFinish with values.email
+//     setTimeout(() => {
+//       onFinish({ email }); // <-- THIS IS THE FIX
+//     }, 300);
+//   }
+// }, [searchParams, form]);
+
+
+//   // ---------------------------
+//   //   REGISTER FUNCTION
+//   // ---------------------------
+//   const onFinish = async (values) => {
+//     setLoading(true);
+
+//     try {
+//       await new Promise((r) => setTimeout(r, 500));
+
+//       const response = await axios.post(`${API_BASE_URL}/api/v1/register`, {
+//         email: values.email,
+//       });
+
+//       if (!response.data) throw new Error("No response data");
+//       const { token, message: msg, otpVerified, isPassword } = response.data;
+
+//       const otpVerifiedBool =
+//         otpVerified === true || otpVerified === "true" || otpVerified === 1;
+//       const isPasswordBool =
+//         isPassword === true || isPassword === "true" || isPassword === 1;
+
+//       if (token) sessionStorage.setItem("token", token);
+//       localStorage.setItem("email", values.email);
+
+//       if (window.Modal) window.Modal.destroyAll?.();
+
+//       // ---- Navigation Logic ----
+//       if (otpVerifiedBool && !isPasswordBool) {
+//         messageApi.info("Email verified. Continue your registration.");
+//         navigate("/personal-information", { replace: true });
+//       } else if (!otpVerifiedBool && !isPasswordBool) {
+//         messageApi.success(msg || "Verification email sent.");
+//         navigate("/enter-confirmation-pin", { replace: true });
+//       } else if (!otpVerifiedBool && isPasswordBool) {
+//         messageApi.warning("Please verify your email.");
+//         navigate("/enter-confirmation-pin", { replace: true });
+//       } else {
+//         messageApi.success(msg || "Registration complete!");
+//         navigate("/personal-information", { replace: true });
+//       }
+//     } catch (err) {
+//       const errorMsg =
+//         err.response?.data?.message ||
+//         "Registration failed. Please try again.";
+//       messageApi.error(errorMsg);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <>
+//       {contextHolder}
+//       <div className="max-w-md mx-auto p-6">
+//         <h2 className="text-2xl font-bold mb-4">Register</h2>
+
+//         <Form
+//           form={form}
+//           layout="vertical"
+//           onFinish={onFinish}
+//           initialValues={{ email: "" }}
+//         >
+//           <Form.Item
+//             name="email"
+//             label="Email"
+//             rules={[
+//               { required: true, message: "Please enter your email" },
+//               { type: "email", message: "Enter a valid email" },
+//             ]}
+//           >
+//             <Input placeholder="Email" size="large" />
+//           </Form.Item>
+
+//           <Form.Item>
+//             <Button type="primary" htmlType="submit" loading={loading} block>
+//               Continue
+//             </Button>
+//           </Form.Item>
+//         </Form>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default RegistrationPage;

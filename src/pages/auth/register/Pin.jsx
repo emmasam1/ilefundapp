@@ -40,7 +40,7 @@ const Pin = () => {
 
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/resend-verification-code`,
+        `${API_BASE_URL}/api/v1/resend-verification-code`,
         {
           email,
         }
@@ -72,7 +72,7 @@ const Pin = () => {
     if (value.length === 6) {
       try {
         setLoading(true);
-        const response = await axios.post(`${API_BASE_URL}/verify-account`, {
+        const response = await axios.post(`${API_BASE_URL}/api/v1/verify-account`, {
           code: value,
         });
 

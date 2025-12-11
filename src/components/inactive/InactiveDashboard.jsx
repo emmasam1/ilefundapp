@@ -52,8 +52,10 @@ const InactiveDashboard = () => {
   const [selected, setSelected] = useState(null);
   const [pinModal, setPinModal] = useState("");
 
-  const { API_BASE_URL, token } = useApp();
+  const { API_BASE_URL } = useApp();
   // console.log(token)
+  const token = sessionStorage.getItem("token");
+  // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5M2IyZjgwZmY1ZTFkZWQ3NGM2NWEwMSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzY1NDg2NDY1LCJleHAiOjE3NjYwOTEyNjV9.iOzNnIdfd1B9t4-0zecc-0wpPMLrit-jqilLxfPOINk'
 
   const navigate = useNavigate();
 
@@ -300,6 +302,7 @@ const InactiveDashboard = () => {
   }, [token])
 
   const nextStep = async () => {
+
     if (!token) return;
     setLoading(true);
     try {
@@ -328,12 +331,12 @@ const InactiveDashboard = () => {
           phone: values.phone || formData.phone, // or add real phone input
         };
 
-        // console.log("Submitting payload:", payload);
-        // console.log("this is the token:", token);
+        console.log("Submitting payload:", payload);
+        console.log("this is the token:", token);
 
         try {
           const res = await axios.post(
-            `${API_BASE_URL}/continue-registration`,
+            `${API_BASE_URL}/api/v1/continue-registration`,
             payload,
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -367,7 +370,7 @@ const InactiveDashboard = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post(`${API_BASE_URL}/setup/pin`, payload, {
+      const res = await axios.post(`${API_BASE_URL}/api/v1/setup/pin`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
