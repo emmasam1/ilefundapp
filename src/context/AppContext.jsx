@@ -5,11 +5,27 @@ const AppContext = createContext();
 const SECRET_KEY = "ilefund-super-secure-key-256bit"; // 32 chars = 256 bits
 
 export const AppProvider = ({ children }) => {
-  const API_BASE_URL = "https://wallet-v2-aeqw.onrender.com";
+ 
   // const EST_URL ="https://wallet-v2-aeqw.onrender.com"
   const [token, setToken] = useState(null);
+  const [API_BASE_URL, set_API_BASE_URL] = useState("");
   const [user, setUser] = useState(null);
   const [initialized, setInitialized] = useState(false);
+
+  const loadAPIBaseURL = () => { 
+
+  axios.get(import.meta.env.VITE_BASE_URL)
+  .then(response => {
+    const { web_api_url, estate_api } = response.data.data;
+    set_API_BASE_URL(web_api_url);
+     axios.get(estate_api)
+     
+  })
+  .catch(error => {
+    console.error('Axios error:', error);
+  });
+    
+  }
 
   // --- 🔐 Key Generation ---
   const getKey = async () => {
@@ -25,6 +41,8 @@ export const AppProvider = ({ children }) => {
       ["encrypt", "decrypt"]
     );
   };
+
+
 
   // --- 🔐 Encrypt Data ---
   const encryptData = async (data) => {
@@ -120,6 +138,7 @@ export const AppProvider = ({ children }) => {
   // ✅ Load and decrypt on mount
   useEffect(() => {
     (async () => {
+      loadAPIBaseURL();
       const storedToken = sessionStorage.getItem("token");
       const storedUser = sessionStorage.getItem("user");
 

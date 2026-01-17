@@ -375,7 +375,7 @@ const Congrats = () => {
                 <img src={bars} alt="" />
                 <p className="text-[#B0B2C3] text-lg text-center">
                   Verify Account to <br /> enjoy listed properties
-                  <br /> on ILEFUND
+                  <br /> on ileFund
                 </p>
               </div>
             </div>

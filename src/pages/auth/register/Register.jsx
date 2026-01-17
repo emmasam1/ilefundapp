@@ -9,6 +9,7 @@ import progress from "../../../assets/progress_terms.png";
 import progress_reg from "../../../assets/progress_reg.png";
 import { useApp } from "../../../context/AppContext.jsx";
 import axios from "axios";
+import AuthRightSide from "../../../components/Auth-Right-Side.jsx";
 
 const Register = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,14 +33,8 @@ const Register = () => {
 
   if (email) {
     console.log("📩 Email from URL:", email);
-
-    // 1️⃣ Put email inside the form
-    form.setFieldsValue({ email });
-
-    // 2️⃣ Mark that we are auto-submitting once
-    autoSubmittedRef.current = true;
-
-    // 3️⃣ Trigger onFinish with values.email
+    form.setFieldsValue({ email }); 
+    autoSubmittedRef.current = true; 
     setTimeout(() => {
       onFinish({ email }); // <-- THIS IS THE FIX
     }, 300);
@@ -260,7 +255,7 @@ const onFinish = async (values) => {
                 <Input
                   placeholder="Enter your email"
                   type="email"
-                  className="w-full !bg-gray-100 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
+                  className="w-full h-12 !bg-gray-100 !rounded-lg !border-none focus:!ring-2 focus:!ring-blue-500"
                 />
               </Form.Item>
             </div>
@@ -278,7 +273,7 @@ const onFinish = async (values) => {
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  className="mt-6 w-full md:w-auto !bg-blue-600 hover:!bg-blue-700 !text-white flex items-center justify-center gap-2"
+                  className="mt-6  w-auto md:w-auto  !bg-blue-600 hover:!bg-blue-700 !text-white flex items-center justify-center gap-2"
                 >
                   Send Code <MdArrowRightAlt size={30} />
                 </Button>
@@ -346,37 +341,7 @@ const onFinish = async (values) => {
         </div>
 
         {/* Right Side */}
-        <div className="hidden md:flex items-center justify-center bg-[#0047FF]">
-          <div className="text-white p-8 md:p-12 max-w-md">
-            <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
-              ILEFUND <br /> Investment and <br /> Land Ownership
-            </h1>
-
-            <div className="space-y-6">
-              <div>
-                <p className="flex items-center gap-2 font-bold text-lg">
-                  <CheckCircleFilled className="text-white" />
-                  Build your savings
-                </p>
-                <p className="text-sm text-gray-100">
-                  Consistently automate your savings while setting realistic
-                  goals
-                </p>
-              </div>
-
-              <div>
-                <p className="flex items-center gap-2 font-bold text-lg">
-                  <CheckCircleFilled className="text-white" />
-                  Invest deliberately
-                </p>
-                <p className="text-sm text-gray-100">
-                  Invest in our diverse range of assets that grow in value over
-                  time.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+         <AuthRightSide/>
       </div>
     </>
   );

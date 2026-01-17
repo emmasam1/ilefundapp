@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { CheckCircleFilled } from "@ant-design/icons";
 import progress_reg from "../../../assets/progress_reg.png";
 import CustomButton from "../../../components/button/CustomButton";
+import AuthRightSide from "../../../components/Auth-Right-Side";
 
 const Country = () => {
   const navigate = useNavigate();
@@ -293,36 +294,7 @@ const Country = () => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
-        <div className="text-white p-8 md:p-12 max-w-md">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
-            ILEFUND <br /> Investment and <br /> Land Ownership
-          </h1>
-
-          <div className="space-y-6">
-            <div>
-              <p className="flex items-center gap-2 font-bold text-lg">
-                <CheckCircleFilled className="text-white" />
-                Build your savings
-              </p>
-              <p className="text-sm text-gray-100">
-                Consistently automate your savings while setting realistic goals
-              </p>
-            </div>
-
-            <div>
-              <p className="flex items-center gap-2 font-bold text-lg">
-                <CheckCircleFilled className="text-white" />
-                Invest deliberately
-              </p>
-              <p className="text-sm text-gray-100">
-                Invest in our diverse range of assets that grow in value over
-                time.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <AuthRightSide/>
     </div>
   );
 };

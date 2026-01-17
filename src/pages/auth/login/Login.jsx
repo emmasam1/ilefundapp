@@ -6,6 +6,7 @@ import { MdArrowRightAlt } from "react-icons/md";
 import { CheckCircleFilled } from "@ant-design/icons";
 import { useApp } from "../../../context/AppContext.jsx";
 import axios from "axios";
+import AuthRightSide from "../../../components/Auth-Right-Side.jsx";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Login = () => {
   const onFinish = async (values) => {
     setLoading(true)
     try {
+      console.log(API_BASE_URL);
+      
       const res = await axios.post(`${API_BASE_URL}/api/v1/login`, values);
       if (res?.data?.success) {
         await setAuthData(res.data);
@@ -91,7 +94,7 @@ const Login = () => {
 
           <Form.Item>
             <Button
-              className="mt-6 !bg-blue-600 hover:!bg-blue-700 w-full md:w-auto !text-white !border-none"
+              className="mt-6 !bg-blue-600 hover:!bg-blue-700 w-full  md:w-auto !text-white !border-none"
               loading={loading}
               htmlType="submit"
             >
@@ -119,36 +122,7 @@ const Login = () => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
-        <div className="text-white p-8 md:p-12 max-w-md">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
-            ILEFUND <br /> Investment and <br /> Land Ownership
-          </h1>
-
-          <div className="space-y-6">
-            <div>
-              <p className="flex items-center gap-2 font-bold text-lg">
-                <CheckCircleFilled className="text-white" />
-                Build your savings
-              </p>
-              <p className="text-sm text-gray-100">
-                Consistently automate your savings while setting realistic goals
-              </p>
-            </div>
-
-            <div>
-              <p className="flex items-center gap-2 font-bold text-lg">
-                <CheckCircleFilled className="text-white" />
-                Invest deliberately
-              </p>
-              <p className="text-sm text-gray-100">
-                Invest in our diverse range of assets that grow in value over
-                time.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+       <AuthRightSide/>
     </div>
   );
 };

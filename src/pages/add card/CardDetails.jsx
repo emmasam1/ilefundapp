@@ -339,9 +339,11 @@ const CardDetails = () => {
       {/* Right Side (unchanged) */}
       <div className="hidden md:flex items-center justify-center bg-[#0047FF]">
         <div className="text-white p-8 md:p-12 max-w-md">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
-            ILEFUND <br /> Investment and <br /> Land Ownership
+          <h1 className="text-2xl md:text-3xl font-bold leading-snug">
+            <i>Ile’ means home —</i> 
           </h1>
+          <p> ileFund helps you save toward owning one.</p>
+          <br />
 
           <div className="space-y-6">
             <div>
@@ -357,13 +359,14 @@ const CardDetails = () => {
             <div>
               <p className="flex items-center gap-2 font-bold text-lg">
                 <CheckCircleFilled className="text-white" />
-                Invest deliberately
+                Set a target.
               </p>
               <p className="text-sm text-gray-100">
-                Invest in our diverse range of assets that grow in value over time.
+               Explore our wide range of properties and choose a savings plan that works for you. 
               </p>
             </div>
           </div>
+
         </div>
       </div>
 

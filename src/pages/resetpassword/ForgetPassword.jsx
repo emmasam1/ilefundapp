@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import logo from "../../assets/ilefund-Logo-long.png";
 import { useApp } from "../../context/AppContext.jsx";
+import AuthRightSide from "../../components/Auth-Right-Side.jsx";
 
 const ForgetPassword = () => {
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const ForgetPassword = () => {
 
         <Form layout="vertical" className="max-w-lg w-full" onFinish={onFinish}>
           <h1 className="mt-2 pb-3 text-3xl md:text-4xl font-bold text-gray-900">
-            FORGOT PASSWORD?
+            Forgot Password?
           </h1>
 
           <p className="text-gray-500 font-medium text-base md:text-lg">
@@ -93,37 +94,7 @@ const ForgetPassword = () => {
       </div>
 
       {/* Right Side */}
-      <div className="hidden md:flex items-center justify-center bg-[#0047FF] rounded-3xl">
-        <div className="text-white p-8 md:p-12 max-w-md">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-snug">
-            ILEFUND <br /> Investment and <br /> Land Ownership
-          </h1>
-
-          <div className="space-y-6">
-            <div>
-              <p className="flex items-center gap-2 font-bold text-lg">
-                <CheckCircleFilled />
-                Build your savings
-              </p>
-              <p className="text-sm text-gray-100">
-                Consistently automate your savings while setting realistic
-                goals.
-              </p>
-            </div>
-
-            <div>
-              <p className="flex items-center gap-2 font-bold text-lg">
-                <CheckCircleFilled />
-                Invest deliberately
-              </p>
-              <p className="text-sm text-gray-100">
-                Invest in our diverse range of assets that grow in value over
-                time.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+     <AuthRightSide/>
     </div>
   );
 };
